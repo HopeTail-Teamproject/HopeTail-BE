@@ -10,4 +10,6 @@ public class HelloSpringApplication {
 		SpringApplication.run(HelloSpringApplication.class, args);
 	}
 
+	//실행시키고 접속 to where? -> http://localhost:8080/
+
 }
