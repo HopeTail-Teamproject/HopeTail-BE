@@ -18,7 +18,7 @@
 ## 2. Tech Stack (기술 스택)
 
 #### 사용 언어
-- Java 11
+- <img src="https://img.shields.io/badge/Java 11?style=for-the-badge&logo=Java&logoColor=white">
 - SpringBoot 2.7.10
 - gradle
 - Thymeleaf
