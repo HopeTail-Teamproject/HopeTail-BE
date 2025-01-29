@@ -1,33 +1,29 @@
 package hello.hello_spring.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import hello.hello_spring.controller.dto.Hello;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class HelloController {
 
-    @GetMapping("hello-api")
+
+    @Operation(summary = "이 api는 사람이름 넣어서 쓰시고, 숫자 넣지 마세요.")
+    @GetMapping("hello-api/{name}")
     @ResponseBody
-    public Hello helloApi(@RequestParam("name") String name){
+    public Hello helloApi(@PathVariable("name") String name){
         Hello hello = new Hello();
         hello.setName(name);
         return hello;
     }
-
-    static class Hello{
-        private String name;
-
-        public String getName(){
-            return name;
-        }
-
-        public void setName(String name){
-            this.name = name;
-        }
+    @GetMapping("hello2/{name}")
+    @ResponseBody
+    public Hello helloHi(@PathVariable("name") String name){
+        Hello hello = new Hello();
+        hello.setName(name+"2222");
+        return hello;
     }
+
 
 
 }
