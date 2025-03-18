@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @Entity
@@ -21,10 +23,6 @@ public class Member {
 
     @Column(nullable = false)
     private String passwordHash;
-
-    private String profileImage;
-
-    private String bio;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts; // 한 사용자가 여러 게시글 작성 가능
