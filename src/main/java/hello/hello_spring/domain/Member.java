@@ -18,5 +18,7 @@ public class Member {
 
     private Integer age;
 
+    private String email;
+
 
 }
