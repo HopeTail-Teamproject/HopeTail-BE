@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 public class HelloController {
 
 
-    @Operation(summary = "이 api는 사람이름 넣어서 쓰시고, 숫자 넣지 마세요.")
+    @Operation(summary = "테스트용 API: 이 api는 사람이름 넣어서 쓰시고, 숫자 넣지 마세요.")
     @GetMapping("hello-api/{name}")
     @ResponseBody
     public Hello helloApi(@PathVariable("name") String name){
@@ -16,6 +16,7 @@ public class HelloController {
         hello.setName(name);
         return hello;
     }
+    @Operation(summary = "테스트용 API임")
     @GetMapping("hello2/{name}")
     @ResponseBody
     public Hello helloHi(@PathVariable("name") String name){
