@@ -32,6 +32,8 @@ dependencies {
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// dotenv 추가
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -48,3 +50,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile) {
+	// Java 버전 설정
+	sourceCompatibility = '21'
+	targetCompatibility = '21'
+}
+
+
