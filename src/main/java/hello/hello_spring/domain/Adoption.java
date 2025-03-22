@@ -11,24 +11,28 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Comment {
+public class Adoption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 게시글
+    // 입양 신청한 유기견
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @JoinColumn(name = "pet_id", nullable = false)
+    private Pet pet;
 
-    // 작성자
+    // 신청자
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.REQUESTED;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime appliedAt = LocalDateTime.now();
+
+    public enum Status {
+        REQUESTED, APPROVED, REJECTED
+    }
 }

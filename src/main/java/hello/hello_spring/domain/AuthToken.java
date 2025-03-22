@@ -11,24 +11,19 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Comment {
+public class AuthToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 게시글
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    // 작성자
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    // 토큰 주인 (유저)
+    @OneToOne
+    @JoinColumn(name = "member_id", nullable = false, unique = true)
     private Member member;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    @Column(nullable = false, length = 512)
+    private String refreshToken;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }

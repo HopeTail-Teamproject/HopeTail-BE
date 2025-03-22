@@ -5,30 +5,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Comment {
+public class PetRegistration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 게시글
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    // 작성자
+    // 등록 신청자
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String petInfo;  // 신청 시 입력한 유기견 정보 (자유 형식)
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
+
+    public enum Status {
+        PENDING, APPROVED, REJECTED
+    }
 }
