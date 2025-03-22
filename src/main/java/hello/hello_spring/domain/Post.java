@@ -2,25 +2,26 @@ package hello.hello_spring.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Setter
-@Getter
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 작성자
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
 
     @Column(nullable = false)
     private String title;
@@ -28,8 +29,16 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private String image;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    // 댓글 리스트
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
+    public enum Category {
+        REVIEW, DIARY
+    }
 }
