@@ -1,6 +1,6 @@
 package hello.hello_spring.controller;
 
-import hello.hello_spring.controller.dto.Hello;
+import hello.hello_spring.dto.Hello;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
