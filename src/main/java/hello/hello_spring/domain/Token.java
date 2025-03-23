@@ -40,17 +40,18 @@ public class Token {
     @JoinColumn(name = "user_id", nullable = false)
     private Member member;
 
+    public enum Type {
+        REFRESH,
+        CERTIFICATION,
+        PASSWORD_RESET
+    }
+
+    public enum CertificationType {
+        EMAIL,
+        PHONE
+    }
 }
 
-enum Type {
-    ACCESS,
-    REFRESH,
-    CERTIFICATION,
-    PASSWORD_RESET,
-    FIND_ID
-}
 
-enum CertificationType {
-    EMAIL,
-    PHONE
-}
+
+

@@ -77,10 +77,11 @@ public class Member {
     public enum Role {
         USER, ADMIN
     }
+
+    public enum Status {
+        ACTIVE,
+        INACTIVE,
+        PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+    }
 }
 
-enum Status {
-    ACTIVE,
-    INACTIVE,
-    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-}
