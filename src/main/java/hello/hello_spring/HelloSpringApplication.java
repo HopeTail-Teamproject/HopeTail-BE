@@ -10,6 +10,7 @@ public class HelloSpringApplication {
 		SpringApplication.run(HelloSpringApplication.class, args);
 	}
 
-	//실행시키고 접속 to where? -> http://localhost:8080/
+	// 실행시키고 접속 to where? -> http://localhost:8080/
+	// Swagger 접속 to where? -> http://localhost:8080/swagger-ui/index.html
 
 }
