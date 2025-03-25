@@ -1,6 +1,6 @@
 //package hello.hello_spring.service;
 //
-//import hello.hello_spring.domain.Member;
+//import hello.hello_spring.domain.member.Member;
 //import hello.hello_spring.repository.MemberRepository;
 //import hello.hello_spring.repository.MemoryMemberRepository;
 //

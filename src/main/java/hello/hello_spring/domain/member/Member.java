@@ -1,6 +1,9 @@
-package hello.hello_spring.domain;
+package hello.hello_spring.domain.member;
 
+import hello.hello_spring.domain.*;
+import hello.hello_spring.domain.jwt.token.Token;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +22,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -46,12 +50,6 @@ public class Member {
     @Column
     private LocalDateTime lastLogin;
 
-    @ColumnDefault("0")
-    private boolean emailCertified;
-
-    @ColumnDefault("0")
-    private boolean phoneCertified;
-
     private String profileImage; // nullable
 
     @Enumerated(EnumType.STRING)
@@ -70,6 +68,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRegistration> petRegistrations;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> Tokens; // 한 사용자가 여러 토큰 가질 수 있음    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 
@@ -82,6 +81,12 @@ public class Member {
         ACTIVE,
         INACTIVE,
         PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+    }
+
+    @Builder
+    public Member(String username, String email){
+        this.username = username;
+        this.email = email; // 생성자(미완)
     }
 }
 

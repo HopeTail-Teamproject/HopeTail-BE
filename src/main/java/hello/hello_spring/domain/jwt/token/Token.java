@@ -1,8 +1,10 @@
-package hello.hello_spring.domain;
+package hello.hello_spring.domain.jwt.token;
 
+import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -20,27 +22,27 @@ public class Token {
 
     @CreationTimestamp
     private LocalDateTime createdat;
-
-    private LocalDateTime expiredat;
+//
+//    private LocalDateTime expiredat;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Type type;
 
     @Enumerated(EnumType.STRING)
     private CertificationType certificationType;
 
-    @Column
-    private String email;
-
-    @Column
-    private String phoneNumber;
+//    @Column
+//    private String email;
+//
+//    @Column
+//    private String phoneNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Member member;
 
     public enum Type {
+        ACCESS,
         REFRESH,
         CERTIFICATION,
         PASSWORD_RESET
