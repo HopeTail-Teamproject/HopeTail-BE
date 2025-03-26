@@ -2,16 +2,19 @@ package hello.hello_spring.domain.jwt.token;
 
 import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Email;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
+@ToString(exclude = {"Token"})
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,25 +24,21 @@ public class Token {
     private String Token;
 
     @CreationTimestamp
-    private LocalDateTime createdat;
-//
-//    private LocalDateTime expiredat;
+    private LocalDateTime tokenCreatedAt;
+
+    private LocalDateTime tokenExpiredAt;
 
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Enumerated(EnumType.STRING)
-    private CertificationType certificationType;
-
-//    @Column
-//    private String email;
-//
-//    @Column
-//    private String phoneNumber;
+    @Email
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Member member;
+
+
 
     public enum Type {
         ACCESS,
@@ -48,10 +47,6 @@ public class Token {
         PASSWORD_RESET
     }
 
-    public enum CertificationType {
-        EMAIL,
-        PHONE
-    }
 }
 
 

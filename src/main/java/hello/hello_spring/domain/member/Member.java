@@ -38,10 +38,10 @@ public class Member {
     private String phoneNumber;
 
     @CreationTimestamp
-    private LocalDateTime createdat;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedat;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("PENDING")
@@ -70,7 +70,7 @@ public class Member {
     private List<PetRegistration> petRegistrations;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> Tokens; // 한 사용자가 여러 토큰 가질 수 있음    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Token> Tokens;
 
     // 사용자 권한 enum
     public enum Role {
