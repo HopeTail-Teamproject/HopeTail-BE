@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Setter
@@ -20,13 +21,16 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String tokenId;
+
     @Lob
     private String Token;
 
     @CreationTimestamp
-    private LocalDateTime tokenCreatedAt;
+    private Date tokenCreatedAt;
 
-    private LocalDateTime tokenExpiredAt;
+    private Date tokenExpiredAt;
 
     @Enumerated(EnumType.STRING)
     private Type type;

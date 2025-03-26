@@ -43,6 +43,9 @@ public class Member {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column
+    private String address;
+
     @Enumerated(EnumType.STRING)
     @ColumnDefault("PENDING")
     private Status status;

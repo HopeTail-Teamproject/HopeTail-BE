@@ -7,21 +7,20 @@ import lombok.ToString;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @ToString(exclude = {"Token"})
 public class TokenDto {
-    private Long id;
+    private String tokenId;
     private String Token;
-    private LocalDateTime tokenExpiredAt;
+    private Date tokenExpiredAt;
     private String email;
-    private Type type;
 
     @Builder
-    public TokenDto(Long id, String Token, LocalDateTime tokenExpiredAt, String email, Type type){
-        this.id = id;
+    public TokenDto(String tokenId, String Token, Date tokenExpiredAt, String email){
+        this.tokenId = tokenId;
         this.Token = Token;
         this.tokenExpiredAt = tokenExpiredAt;
         this.email = email;
-        this.type = type;
     }
 }
