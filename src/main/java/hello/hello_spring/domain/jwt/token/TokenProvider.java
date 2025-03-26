@@ -3,14 +3,13 @@ package hello.hello_spring.domain.jwt.token;
 
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.TokenDto;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import hello.hello_spring.dto.TokenValidationResult;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -74,5 +73,36 @@ public class TokenProvider {
                 .tokenExpiredAt(TokenExpireTime)
                 .build();
 
+    }
+
+    public TokenValidationResult validateToken(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
+            return new TokenValidationResult(TokenStatus.TOKEN_VALID,
+                    claims.get(TOKEN_ID_KEY, String.class),
+                    Token.Type.ACCESS,
+                    claims);
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 jwt 토큰");
+            return getExpiredValidationToken(e);
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명");
+            return new TokenValidationResult(TokenStatus.TOKEN_WRONG_SIGNATURE, null, null, null);
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 서명");
+            return new TokenValidationResult(TokenStatus.TOKEN_HASH_NOT_SUPPORTED, null, null, null);
+        } catch (IllegalArgumentException e) {
+            log.info("잘못된 JWT 토큰");
+            return new TokenValidationResult(TokenStatus.TOKEN_WRONG_SIGNATURE, null, null, null);
+        }
+
+    }
+
+    private TokenValidationResult getExpiredValidationToken(ExpiredJwtException e) {
+        Claims claims = e.getClaims();
+        return new TokenValidationResult(TokenStatus.TOKEN_EXPIRED,
+                claims.get(TOKEN_ID_KEY, String.class),
+                Token.Type.ACCESS,
+                null); // null 변동가능 (향후 claims 활용 시) //
     }
 }

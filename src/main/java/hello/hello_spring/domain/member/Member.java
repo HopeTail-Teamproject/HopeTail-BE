@@ -32,7 +32,7 @@ public class Member {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
@@ -87,9 +87,11 @@ public class Member {
     }
 
     @Builder
-    public Member(String username, String email){
+    public Member(String username, String email, String password, Role role){
         this.username = username;
-        this.email = email; // 생성자(미완)
+        this.email = email;
+        this.password = password;// 생성자(미완)
+        this.role = role;
     }
 }
 

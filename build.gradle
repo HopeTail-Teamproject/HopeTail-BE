@@ -41,9 +41,11 @@ dependencies {
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+
+	// 테스트에서 lombok 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// spring docs
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.2'

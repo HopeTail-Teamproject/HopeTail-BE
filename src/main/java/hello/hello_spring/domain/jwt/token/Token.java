@@ -4,11 +4,8 @@ import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
