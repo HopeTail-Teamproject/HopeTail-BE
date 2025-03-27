@@ -40,7 +40,7 @@ public class Member {
     private LocalDateTime updatedat;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("PENDING")
+    @ColumnDefault("'PENDING'")
     private Status status;
 
     @Column
