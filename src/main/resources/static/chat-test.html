@@ -2,10 +2,10 @@
 <html>
 <head>
   <title>Chat Test</title>
-  <!-- 1. SockJS 먼저 로드 -->
-  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
-  <!-- 2. STOMP.js 로드 -->
-  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/dist/stomp.min.js"></script>
+  <!-- 1. SockJS 먼저 로드 (로컬 파일) -->
+  <script src="/js/sockjs.min.js"></script>
+  <!-- 2. STOMP.js 로드 (로컬 파일) -->
+  <script src="/js/stomp.umd.js"></script>
 </head>
 <body>
 <div>
@@ -16,15 +16,18 @@
 </div>
 <div id="chatLogs"></div>
 
-<!-- 3. 실제 WebSocket 코드 -->
 <script>
   var stompClient = null;
 
   function connect() {
+    // SockJS 엔드포인트
     var socket = new SockJS('/ws-stomp');
-    stompClient = Stomp.over(socket);
+    // **중요**: stomp.umd.js는 전역으로 StompJs를 정의하므로, StompJs.Stomp를 써야 함
+    stompClient = StompJs.Stomp.over(socket);
+
     stompClient.connect({}, function(frame) {
       console.log('Connected: ' + frame);
+
       stompClient.subscribe('/topic/chat', function(message) {
         var msgObj = JSON.parse(message.body);
         document.getElementById("chatLogs").innerHTML +=
@@ -37,7 +40,6 @@
     var roomId = document.getElementById('roomId').value;
     var senderId = document.getElementById('senderId').value;
     var content = document.getElementById('content').value;
-
     stompClient.send("/app/chat/message", {}, JSON.stringify({
       chatRoomId: roomId,
       senderId: senderId,
@@ -46,6 +48,14 @@
   }
 
   window.onload = connect;
+
+  // 진단용: SockJS와 StompJs.Stomp가 어떻게 잡히는지 확인
+  window.addEventListener('load', () => {
+    console.log('SockJS = ', window.SockJS);
+    console.log('StompJs = ', window.StompJs);
+    // StompJs.Stomp가 실제 객체인지 확인
+    console.log('StompJs.Stomp = ', window.StompJs?.Stomp);
+  });
 </script>
 </body>
 </html>
