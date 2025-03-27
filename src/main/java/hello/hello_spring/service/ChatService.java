@@ -1,10 +1,12 @@
 package hello.hello_spring.service;
 
+import hello.hello_spring.Repository.ChatMessageRepository;
+import hello.hello_spring.Repository.ChatRoomRepository;
+import hello.hello_spring.Repository.MemberRepository;
 import hello.hello_spring.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

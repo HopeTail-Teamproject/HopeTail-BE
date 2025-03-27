@@ -1,5 +1,6 @@
-package hello.hello_spring.domain;
+package hello.hello_spring.Repository;
 
+import hello.hello_spring.domain.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
