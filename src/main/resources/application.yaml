@@ -23,3 +23,9 @@ springdoc:
     path: /swagger-ui
     display-request-duration: true
 
+jwt:
+  header: Authorization
+  secret: dGhpcyBpcyBteSBoaWRkZW4gand0IHNlY3JldGUga2V5LCB3aGF0IGlzIHlvdXIgand0IHNlY3JldGUga2V5Pw==
+  access-token-validity-in-seconds: 3600
+
+

@@ -1,13 +1,12 @@
-package hello.hello_spring.domain.jwt.token;
+package hello.hello_spring.domain.jwt;
 
+import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.TokenDto;
 import hello.hello_spring.dto.TokenValidationResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class TokenProviderTest {

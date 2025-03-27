@@ -8,6 +8,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 
 import java.security.Key;
 import java.util.Date;
@@ -42,6 +43,8 @@ public class TokenProvider {
                 .signWith(hashKey, SignatureAlgorithm.HS512)
                 .setExpiration(TokenExpireTime)
                 .compact();
+
+        // Refresh 토큰
 
         // Certification 토큰
 
@@ -96,6 +99,10 @@ public class TokenProvider {
             return new TokenValidationResult(TokenStatus.TOKEN_WRONG_SIGNATURE, null, null, null);
         }
 
+    }
+
+    public Authentication getAuthentication(String token, Claims claims) {
+        return null;
     }
 
     private TokenValidationResult getExpiredValidationToken(ExpiredJwtException e) {
