@@ -2,17 +2,24 @@ package hello.hello_spring.domain.jwt.token;
 
 
 import hello.hello_spring.domain.member.Member;
+import hello.hello_spring.domain.member.MemberPrinciple;
 import hello.hello_spring.dto.TokenDto;
 import hello.hello_spring.dto.TokenValidationResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class TokenProvider {
@@ -102,7 +109,16 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token, Claims claims) {
-        return null;
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+        MemberPrinciple principle = new MemberPrinciple(claims.get(USERNAME_KEY, String.class), claims.getSubject(),
+                authorities);
+
+        return new UsernamePasswordAuthenticationToken(principle, token, authorities);
+
     }
 
     private TokenValidationResult getExpiredValidationToken(ExpiredJwtException e) {
