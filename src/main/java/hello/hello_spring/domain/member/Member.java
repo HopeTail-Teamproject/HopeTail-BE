@@ -74,7 +74,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 
     private List<Token> Tokens;
-    
+
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN
