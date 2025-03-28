@@ -72,8 +72,6 @@ public class Member {
     private List<PetRegistration> petRegistrations;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> Tokens; // 한 사용자가 여러 토큰 가질 수 있음    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private AuthToken authToken;
 
     // 사용자 권한 enum
     public enum Role {

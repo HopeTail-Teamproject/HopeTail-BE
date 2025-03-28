@@ -1,4 +1,4 @@
-package hello.hello_spring.controller.dto;
+package hello.hello_spring.dto;
 
 import lombok.Getter;
 import lombok.Setter;

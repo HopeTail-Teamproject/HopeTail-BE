@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import hello.hello_spring.controller.dto.ChatMessageDto;
+import hello.hello_spring.dto.ChatMessageDto;
 
 @Controller
 @RequiredArgsConstructor
