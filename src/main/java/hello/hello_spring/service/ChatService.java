@@ -1,5 +1,6 @@
 package hello.hello_spring.service;
 
+import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.repository.ChatMessageRepository;
 import hello.hello_spring.repository.ChatRoomRepository;
 import hello.hello_spring.repository.MemberRepository;
