@@ -16,7 +16,7 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final MemberRepository memberRepository; // 이미 있을 것으로 가정
+    private final MemberRepository memberRepository;
 
     /**
      * 채팅방 생성 (1:1 기준)
