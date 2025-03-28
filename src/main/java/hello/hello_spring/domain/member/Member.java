@@ -72,13 +72,9 @@ public class Member {
     private List<PetRegistration> petRegistrations;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-<<<<<<< HEAD:src/main/java/hello/hello_spring/domain/Member.java
-    private List<Token> Tokens; // 한 사용자가 여러 토큰 가질 수 있음    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    // private AuthToken authToken;
-=======
-    private List<Token> Tokens;
->>>>>>> member:src/main/java/hello/hello_spring/domain/member/Member.java
 
+    private List<Token> Tokens;
+    
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN
