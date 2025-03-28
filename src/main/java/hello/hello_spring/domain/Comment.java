@@ -1,5 +1,6 @@
 package hello.hello_spring.domain;
 
+import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

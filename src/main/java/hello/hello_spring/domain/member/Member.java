@@ -1,6 +1,9 @@
-package hello.hello_spring.domain;
+package hello.hello_spring.domain.member;
 
+import hello.hello_spring.domain.*;
+import hello.hello_spring.domain.jwt.token.Token;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,16 +31,19 @@ public class Member {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @CreationTimestamp
-    private LocalDateTime createdat;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedat;
+    private LocalDateTime updatedAt;
+
+    @Column
+    private String address;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("PENDING")
@@ -45,12 +51,6 @@ public class Member {
 
     @Column
     private LocalDateTime lastLogin;
-
-    @ColumnDefault("0")
-    private boolean emailCertified;
-
-    @ColumnDefault("0")
-    private boolean phoneCertified;
 
     private String profileImage; // nullable
 
@@ -70,18 +70,32 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRegistration> petRegistrations;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+<<<<<<< HEAD:src/main/java/hello/hello_spring/domain/Member.java
     private List<Token> Tokens; // 한 사용자가 여러 토큰 가질 수 있음    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     // private AuthToken authToken;
+=======
+    private List<Token> Tokens;
+>>>>>>> member:src/main/java/hello/hello_spring/domain/member/Member.java
 
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN
     }
+
+    public enum Status {
+        ACTIVE,
+        INACTIVE,
+        PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+    }
+
+    @Builder
+    public Member(String username, String email, String password, Role role){
+        this.username = username;
+        this.email = email;
+        this.password = password;// 생성자(미완)
+        this.role = role;
+    }
 }
 
-enum Status {
-    ACTIVE,
-    INACTIVE,
-    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-}
