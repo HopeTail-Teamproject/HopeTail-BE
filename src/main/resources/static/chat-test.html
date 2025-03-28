@@ -22,16 +22,17 @@
   function connect() {
     // SockJS 엔드포인트
     var socket = new SockJS('/ws-stomp');
-    // **중요**: stomp.umd.js는 전역으로 StompJs를 정의하므로, StompJs.Stomp를 써야 함
+    // stomp.umd.js는 전역으로 StompJs를 정의하므로, StompJs.Stomp를 사용
     stompClient = StompJs.Stomp.over(socket);
 
     stompClient.connect({}, function(frame) {
       console.log('Connected: ' + frame);
 
+      // /topic/chat 구독 (서버가 이 경로로 브로드캐스트하면 수신)
       stompClient.subscribe('/topic/chat', function(message) {
         var msgObj = JSON.parse(message.body);
         document.getElementById("chatLogs").innerHTML +=
-                "<p><b>" + msgObj.senderId + "</b>: " + msgObj.content + "</p>";
+                "<p><b>Received (" + msgObj.senderId + ")</b>: " + msgObj.content + "</p>";
       });
     });
   }
@@ -40,6 +41,12 @@
     var roomId = document.getElementById('roomId').value;
     var senderId = document.getElementById('senderId').value;
     var content = document.getElementById('content').value;
+
+    // 사용자가 메시지를 보내면 바로 화면에 추가 (내가 보낸 메시지)
+    document.getElementById("chatLogs").innerHTML +=
+            "<p><b>Sent (" + senderId + ")</b>: " + content + "</p>";
+
+    // 서버로 메시지 전송
     stompClient.send("/app/chat/message", {}, JSON.stringify({
       chatRoomId: roomId,
       senderId: senderId,
@@ -49,11 +56,10 @@
 
   window.onload = connect;
 
-  // 진단용: SockJS와 StompJs.Stomp가 어떻게 잡히는지 확인
+  // 진단용: SockJS와 StompJs.Stomp가 제대로 정의되어 있는지 콘솔에 출력
   window.addEventListener('load', () => {
     console.log('SockJS = ', window.SockJS);
     console.log('StompJs = ', window.StompJs);
-    // StompJs.Stomp가 실제 객체인지 확인
     console.log('StompJs.Stomp = ', window.StompJs?.Stomp);
   });
 </script>
