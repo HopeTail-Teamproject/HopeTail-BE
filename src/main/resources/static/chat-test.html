@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Test - 1:1 Private Chat</title>
+  <!-- 1. SockJS 먼저 로드 (로컬 파일) -->
+  <script src="/js/sockjs.min.js"></script>
+  <!-- 2. STOMP.js 로드 (로컬 파일) -->
+  <script src="/js/stomp.umd.js"></script>
+</head>
+<body>
+<div>
+  <input type="text" id="roomId" placeholder="Room ID">
+  <input type="text" id="senderId" placeholder="Sender ID">
+  <!-- 개인 채팅을 위해 받는 사람 ID 추가 -->
+  <input type="text" id="receiverId" placeholder="Receiver ID">
+  <input type="text" id="content" placeholder="Message">
+  <button onclick="sendPrivateMessage()">Send Private</button>
+</div>
+<div id="chatLogs"></div>
+
+<script>
+  var stompClient = null;
+
+  function connect() {
+    var socket = new SockJS('/ws-stomp');
+    // UMD 빌드는 전역 객체로 StompJs를 생성하므로 StompJs.Stomp 사용
+    stompClient = StompJs.Stomp.over(socket);
+
+    stompClient.connect({}, function(frame) {
+      console.log('Connected: ' + frame);
+
+      // 그룹 채팅 구독 (모든 사용자에게 브로드캐스트)
+      stompClient.subscribe('/topic/chat', function(message) {
+        var msgObj = JSON.parse(message.body);
+        document.getElementById("chatLogs").innerHTML +=
+                "<p><b>Group Received (" + msgObj.senderId + ")</b>: " + msgObj.content + "</p>";
+      });
+
+      // 개인 채팅 구독 (현재 사용자에게만 전달됨; 서버에서는 "/user/queue/private"로 전송)
+      stompClient.subscribe('/user/queue/private', function(message) {
+        var msgObj = JSON.parse(message.body);
+        document.getElementById("chatLogs").innerHTML +=
+                "<p><b>Private Received (" + msgObj.senderId + ")</b>: " + msgObj.content + "</p>";
+      });
+    });
+  }
+
+  function sendPrivateMessage() {
+    var roomId = document.getElementById('roomId').value;
+    var senderId = document.getElementById('senderId').value;
+    var receiverId = document.getElementById('receiverId').value;
+    var content = document.getElementById('content').value;
+
+    // 보내는 즉시 화면에 표시 (내가 보낸 메시지)
+    document.getElementById("chatLogs").innerHTML +=
+            "<p><b>Sent Private (" + senderId + " -> " + receiverId + ")</b>: " + content + "</p>";
+
+    // 개인 메시지는 /app/chat/private 엔드포인트로 전송 (서버의 PrivateChatController에서 처리)
+    stompClient.send("/app/chat/private", {}, JSON.stringify({
+      chatRoomId: roomId,
+      senderId: senderId,
+      receiverId: receiverId, // 수신자 ID 추가
+      content: content
+    }));
+  }
+
+  window.onload = connect;
+
+  // 진단용: SockJS와 StompJs.Stomp가 제대로 로드되었는지 확인
+  window.addEventListener('load', () => {
+    console.log('SockJS = ', window.SockJS);
+    console.log('StompJs = ', window.StompJs);
+    console.log('StompJs.Stomp = ', window.StompJs?.Stomp);
+  });
+</script>
+</body>
+</html>

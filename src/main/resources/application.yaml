@@ -5,16 +5,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: on
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
-    database: mysql
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
+    url: jdbc:mysql://localhost:3306/hopetail_db?autoReconnect=true
+    username: root
+    password: 'doitmysql'
 
 springdoc:
   swagger-ui:
