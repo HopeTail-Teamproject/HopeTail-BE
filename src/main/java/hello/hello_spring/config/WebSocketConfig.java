@@ -12,17 +12,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // 클라이언트가 구독할 destination prefix 지정
+        // 클라이언트가 구독할 destination prefix (그룹 채팅과 개인 채팅 모두)
         registry.enableSimpleBroker("/topic", "/queue");
-        // 클라이언트가 메시지를 보낼 때 붙일 prefix 지정
+        // 클라이언트가 메시지를 보낼 때 붙일 prefix
         registry.setApplicationDestinationPrefixes("/app");
+        // 사용자 전용 destination의 접두사 설정 (보통 "/user"를 사용)
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // 웹소켓 연결 엔드포인트 설정 (SockJS 지원 포함)
         registry.addEndpoint("/ws-stomp")
-                .setAllowedOriginPatterns("*") // 모든 Origin 허용 (개발 환경)
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 }
