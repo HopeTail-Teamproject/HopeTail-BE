@@ -3,8 +3,8 @@ package hello.hello_spring.domain.jwt.token;
 
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.member.MemberPrinciple;
-import hello.hello_spring.dto.TokenDto;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenDto;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

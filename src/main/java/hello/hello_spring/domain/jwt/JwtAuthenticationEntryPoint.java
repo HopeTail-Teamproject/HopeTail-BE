@@ -2,7 +2,7 @@ package hello.hello_spring.domain.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.hello_spring.domain.jwt.token.TokenStatus;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import hello.hello_spring.web.json.ApiResponseJson;
 import hello.hello_spring.web.json.ResponseStatusCode;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.token;
 
 import hello.hello_spring.domain.jwt.token.Token.Type;
 import hello.hello_spring.domain.jwt.token.TokenStatus;

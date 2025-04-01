@@ -2,7 +2,7 @@ package hello.hello_spring.domain.jwt;
 
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.jwt.token.TokenStatus;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

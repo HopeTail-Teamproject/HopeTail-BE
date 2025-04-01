@@ -33,21 +33,21 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String phoneNumber;
+//    @Column(nullable = false, unique = true)
+//    private String phoneNumber;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime created_at;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private LocalDateTime updated_at;
 
     @Column
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    @ColumnDefault("PENDING")
-    private Status status;
+//    @Enumerated(EnumType.STRING)
+//    @ColumnDefault("PENDING")
+//    private Status status;
 
     @Column
     private LocalDateTime lastLogin;
@@ -79,11 +79,11 @@ public class Member {
         USER, ADMIN
     }
 
-    public enum Status {
-        ACTIVE,
-        INACTIVE,
-        PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-    }
+//    public enum Status {
+//        ACTIVE,
+//        INACTIVE,
+//        PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+//    }
 
     @Builder
     public Member(String username, String email, String password, Role role){

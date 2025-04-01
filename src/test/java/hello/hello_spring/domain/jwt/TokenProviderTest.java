@@ -2,8 +2,8 @@ package hello.hello_spring.domain.jwt;
 
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
-import hello.hello_spring.dto.TokenDto;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenDto;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
