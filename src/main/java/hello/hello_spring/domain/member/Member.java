@@ -1,13 +1,11 @@
 package hello.hello_spring.domain.member;
 
 import hello.hello_spring.domain.*;
-import hello.hello_spring.domain.jwt.token.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -70,7 +68,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRegistration> petRegistrations;
-    
+
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN

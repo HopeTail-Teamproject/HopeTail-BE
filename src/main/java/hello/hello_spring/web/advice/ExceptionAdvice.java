@@ -3,7 +3,6 @@ package hello.hello_spring.web.advice;
 import hello.hello_spring.web.json.ApiResponseJson;
 import hello.hello_spring.web.json.ResponseStatusCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

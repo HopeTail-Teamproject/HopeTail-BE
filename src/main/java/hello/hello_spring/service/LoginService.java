@@ -3,20 +3,16 @@ package hello.hello_spring.service;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.member.MemberCreateDto;
-import hello.hello_spring.dto.member.MemberLoginDto;
 import hello.hello_spring.dto.token.TokenDto;
 import hello.hello_spring.repository.MemberRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.undo.CannotRedoException;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
