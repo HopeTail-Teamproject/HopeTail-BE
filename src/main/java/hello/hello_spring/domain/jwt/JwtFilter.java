@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.regex.Pattern;
 
 @Component
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final String AUTORIZATION_HEADER = "Autorization";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_REGEX = "Bearer ([a-zA-Z0-9_\\-+/=]+)\\.([a-zA-Z0-9_\\-+/=]+)\\.([a-zA-Z0-9_.\\-+/=]*)";
     private static final Pattern BEARER_PATTERN = Pattern.compile(BEARER_REGEX);
     private final TokenProvider tokenProvider;
@@ -73,10 +74,12 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTORIZATION_HEADER);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && BEARER_PATTERN.matcher(bearerToken).matches()) {
             return bearerToken.substring(7);
         }
         return null;
     }
+
+
 }

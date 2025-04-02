@@ -24,7 +24,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -33,8 +33,8 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-//    @Column(nullable = false, unique = true)
-//    private String phoneNumber;
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
 
     @CreationTimestamp
     private LocalDateTime created_at;
@@ -70,10 +70,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetRegistration> petRegistrations;
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> Tokens;
-
+    
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN
@@ -86,10 +83,12 @@ public class Member {
 //    }
 
     @Builder
-    public Member(String username, String email, String password, Role role){
+    public Member(String username, String email, String password, Role role, String address, String phoneNumber){
         this.username = username;
         this.email = email;
-        this.password = password;// 생성자(미완)
+        this.password = password;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
         this.role = role;
     }
 }

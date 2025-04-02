@@ -42,6 +42,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
         }
 
         sendError(response, errorMessage, errorCode);
+
     }
 
     private void sendError(HttpServletResponse response, String msg, int code) throws IOException {

@@ -20,4 +20,10 @@ public class MemberCreateDto {
     @NotEmpty
     private String username;
 
+    @NotNull
+    private String address;
+
+    @NotNull
+    private String phoneNumber;
+
 }
