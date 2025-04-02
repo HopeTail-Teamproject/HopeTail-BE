@@ -23,18 +23,10 @@ public class ExceptionAdvice {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(BadRequestException.class)
-    public ApiResponseJson handleBadRequestException(BadRequestException e) {
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ApiResponseJson handleBadRequestException(Exception e) {
         return new ApiResponseJson(HttpStatus.BAD_REQUEST, ResponseStatusCode.WRONG_PARAMETER,
                 Map.of("errMsg", e.getMessage()));
 
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponseJson handleIllegalArgumentException(IllegalArgumentException e) {
-        log.error("", e);
-        return new ApiResponseJson(HttpStatus.BAD_REQUEST, ResponseStatusCode.WRONG_PARAMETER,
-                Map.of("errMsg", "비밀번호는 최소 8자리에 영어, 숫자, 특수문자를 포함해야 합니다."));
     }
 }
