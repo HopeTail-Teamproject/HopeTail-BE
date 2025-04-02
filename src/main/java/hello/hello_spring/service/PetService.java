@@ -13,45 +13,47 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
+import hello.hello_spring.dto.PetCreateRequestDto;
+import hello.hello_spring.dto.PetResponseDto;
 
 @Service
 @RequiredArgsConstructor
 public class PetService {
 
     private final PetRepository petRepository;
+    private final MemberRepository memberRepository;
 
-    // 전체 유기견 조회 (WAITING 상태)
-    public List<PetResponseDto> getAllWaitingPets() {
-        return petRepository.findByStatus(Pet.Status.WAITING)
-                .stream()
-                .map(pet -> new PetResponseDto(
-                        pet.getId(),
-                        pet.getName(),
-                        pet.getAge(),
-                        pet.getGender().name(),
-                        pet.getBreed(),
-                        pet.getDescription(),
-                        pet.getImage(),
-                        pet.getStatus().name()
-                ))
+    public PetResponseDto createPet(PetCreateRequestDto dto) {
+        Member member = memberRepository.findById(dto.getRegisteredById())
+                .orElseThrow(() -> new RuntimeException("등록자(member) 찾을 수 없음"));
+
+        Pet pet = new Pet();
+        pet.setName(dto.getName());
+        pet.setAge(dto.getAge());
+        pet.setGender(dto.getGender());
+        pet.setSpecies(dto.getSpecies());
+        pet.setNeutered(dto.isNeutered());
+        pet.setDescription(dto.getDescription());
+        pet.setTrained(dto.isTrained());
+        pet.setVaccinated(dto.isVaccinated());
+        pet.setImage(dto.getImage());
+        pet.setRegisteredBy(member);
+
+        Pet saved = petRepository.save(pet);
+        return new PetResponseDto(saved);
+    }
+
+    public List<PetResponseDto> getAllPets() {
+
+        return petRepository.findAll().stream()
+                .map(PetResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    // 단건 조회
-    public PetResponseDto getPet(Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new RuntimeException("Pet not found"));
-
-        return new PetResponseDto(
-                pet.getId(),
-                pet.getName(),
-                pet.getAge(),
-                pet.getGender().name(),
-                pet.getBreed(),
-                pet.getDescription(),
-                pet.getImage(),
-                pet.getStatus().name()
-        );
+    public PetResponseDto getPet(Long id) {
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 ID의 유기견을 찾을 수 없습니다."));
+        return new PetResponseDto(pet);
     }
 }
 
