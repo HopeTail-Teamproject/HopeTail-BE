@@ -3,6 +3,7 @@ package hello.hello_spring.domain.jwt.config;
 import hello.hello_spring.domain.jwt.JwtAccessDeniedHandler;
 import hello.hello_spring.domain.jwt.JwtAuthenticationEntryPoint;
 import hello.hello_spring.domain.jwt.JwtProperties;
+import hello.hello_spring.domain.jwt.blacklist.AccessTokenBlackList;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +13,11 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class JwtConfig {
 
+    private final AccessTokenBlackList accessTokenBlackList;
+
     @Bean
     public TokenProvider tokenProvider(JwtProperties jwtProperties) {
-        return new TokenProvider(jwtProperties.getSecret(), jwtProperties.getAccessTokenValidityInSeconds());
+        return new TokenProvider(jwtProperties.getSecret(), jwtProperties.getAccessTokenValidityInSeconds(), accessTokenBlackList);
     }
 
     @Bean

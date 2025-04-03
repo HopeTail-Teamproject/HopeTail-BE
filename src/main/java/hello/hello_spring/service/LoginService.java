@@ -1,5 +1,6 @@
 package hello.hello_spring.service;
 
+import hello.hello_spring.domain.jwt.blacklist.AccessTokenBlackList;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.member.MemberCreateDto;
@@ -26,6 +27,7 @@ public class LoginService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final AccessTokenBlackList accessTokenBlackList;
 
     public Member createMember(MemberCreateDto memberCreateDto) {
         checkPasswordLength(memberCreateDto.getPassword());
@@ -88,6 +90,10 @@ public class LoginService {
 
     public Member getUserInfo(String email) {
         return findMemberByEmail(email);
+    }
+
+    public void logout(String accessToken, String email) {
+        accessTokenBlackList.setBlackList(accessToken, email);
     }
 
 }

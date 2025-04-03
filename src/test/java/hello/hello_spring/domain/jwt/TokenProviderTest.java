@@ -1,5 +1,6 @@
 package hello.hello_spring.domain.jwt;
 
+import hello.hello_spring.domain.jwt.blacklist.AccessTokenBlackList;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.token.TokenDto;
@@ -12,7 +13,8 @@ import org.junit.jupiter.api.Test;
 public class TokenProviderTest {
     private final String secrete = "dGhpcyBpcyBteSBoaWRkZW4gand0IHNlY3JldGUga2V5LCB3aGF0IGlzIHlvdXIgand0IHNlY3JldGUga2V5Pw==";
     private final Long TokenValidationInSeconds = 3L;
-    private final TokenProvider tokenProvider = new TokenProvider(secrete, TokenValidationInSeconds);
+    private AccessTokenBlackList accessTokenBlackList;
+    private final TokenProvider tokenProvider = new TokenProvider(secrete, TokenValidationInSeconds, accessTokenBlackList);
     Member member = getMember();
 
 

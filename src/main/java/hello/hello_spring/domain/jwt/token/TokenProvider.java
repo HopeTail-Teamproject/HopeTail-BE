@@ -1,6 +1,7 @@
 package hello.hello_spring.domain.jwt.token;
 
 
+import hello.hello_spring.domain.jwt.blacklist.AccessTokenBlackList;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.member.MemberPrinciple;
 import hello.hello_spring.dto.token.TokenDto;
@@ -28,11 +29,13 @@ public class TokenProvider {
     private static final String TOKEN_ID_KEY = "tokenId";
     private final Key hashKey;
     private final long TokenValidationInMilliseconds;
+    private final AccessTokenBlackList accessTokenBlackList;
 
-    public TokenProvider(String secrete, long TokenValidationInSeconds) {
+    public TokenProvider(String secrete, long TokenValidationInSeconds, AccessTokenBlackList accessTokenBlackList) {
         byte[] keyBytes = Decoders.BASE64.decode(secrete);
         this.hashKey = Keys.hmacShaKeyFor(keyBytes);
         this.TokenValidationInMilliseconds = TokenValidationInSeconds * 1000;
+        this.accessTokenBlackList = accessTokenBlackList;
     }
 
     public TokenDto createToken(Member member) {
@@ -92,7 +95,7 @@ public class TokenProvider {
             Claims claims = Jwts.parser().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
             return new TokenValidationResult(TokenStatus.TOKEN_VALID,
                     claims.get(TOKEN_ID_KEY, String.class),
-                    Token.Type.ACCESS,
+                    TokenType.ACCESS,
                     claims);
         } catch (ExpiredJwtException e) {
             log.info("만료된 jwt 토큰");
@@ -127,7 +130,15 @@ public class TokenProvider {
         Claims claims = e.getClaims();
         return new TokenValidationResult(TokenStatus.TOKEN_EXPIRED,
                 claims.get(TOKEN_ID_KEY, String.class),
-                Token.Type.ACCESS,
+                TokenType.ACCESS,
                 null); // null 변동가능 (향후 claims 활용 시) //
+    }
+
+    public boolean isAccessTokenBlackList(String accessToken) {
+        if (accessTokenBlackList.isBlackList(accessToken)) {
+            log.info("BlackListed Access Token");
+            return true;
+        }
+        return false;
     }
 }

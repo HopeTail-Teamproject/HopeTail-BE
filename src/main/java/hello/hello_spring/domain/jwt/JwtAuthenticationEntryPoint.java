@@ -31,7 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
 
         switch (result.getTokenStatus()) {
             case TOKEN_EXPIRED -> errorCode = ResponseStatusCode.TOKEN_EXPIRED;
-            case TOKEN_ABANDONED -> errorCode = ResponseStatusCode.TOKEN_ABANDONED;
+            case TOKEN_BLACKLISTED -> errorCode = ResponseStatusCode.TOKEN_ABANDONED;
             case TOKEN_WRONG_SIGNATURE -> errorCode = ResponseStatusCode.TOKEN_WRONG_SIGNATURE;
             case TOKEN_HASH_NOT_SUPPORTED -> errorCode = ResponseStatusCode.TOKEN_HASH_NOT_SUPPORTED;
             case NO_AUTH_HEADER -> errorCode = ResponseStatusCode.NO_AUTH_HEADER;

@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -65,6 +62,16 @@ public class LoginController {
         Member member = loginService.getUserInfo(memberPrinciple.getEmail());
 
         return new ApiResponseJson(HttpStatus.OK, member);
+    }
+
+    @PostMapping("/api/account/logout")
+    public ApiResponseJson logoutUser(@AuthenticationPrincipal MemberPrinciple memberPrinciple,
+                                      @RequestHeader("Authorization") String authHeader) {
+        log.info("로그아웃 요청 이메일 : {}", memberPrinciple.getEmail());
+
+        loginService.logout(authHeader.substring(7), memberPrinciple.getEmail());
+
+        return new ApiResponseJson(HttpStatus.OK, "OK. BYE~~");
     }
 
 }
