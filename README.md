@@ -15,7 +15,6 @@
     - [채팅방 생성 (REST)](#채팅방-생성-rest)
     - [실시간 채팅 (WebSocket/STOMP)](#실시간-채팅-websocketstomp)
     - [테스트 방법](#테스트-방법)
-8. [기타](#기타)
 
 ---
 
@@ -201,6 +200,5 @@ POST /chatrooms
     - [**/test-chat.html**](./test-chat.html) (프로젝트 내 위치)
     - 브라우저에서 열고, 서로 다른 Sender/Receiver 설정 후 **Connect** → **Send**
     - `"/topic/chatroom/{roomId}"`를 통해 양쪽에서 메시지가 실시간으로 수신되는지 확인 또는 DB 내의 `chat_message` 테이블에서 확인
-    - 
 
 ---
