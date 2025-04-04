@@ -34,13 +34,11 @@ public class PrivateChatController {
 
     @MessageMapping("/chat/private")
     public void handlePrivateMessage(PrivateChatMessageDto dto) {
-        // 1) DTO에서 정보 추출
         Long chatRoomId = dto.getChatRoomId();
-        Long senderId = dto.getSenderId();
+        Long senderId   = dto.getSenderId();
         Long receiverId = dto.getReceiverId();
-        String content = dto.getContent();
+        String content  = dto.getContent();
 
-        // 2) DB에서 엔티티 조회
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found: " + chatRoomId));
         Member sender = memberRepository.findById(senderId)
@@ -48,16 +46,15 @@ public class PrivateChatController {
         Member receiver = memberRepository.findById(receiverId)
                 .orElseThrow(() -> new RuntimeException("Receiver not found: " + receiverId));
 
-        // 3) ChatMessage 객체 구성 및 저장
+        // 메시지 DB 저장
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoom(chatRoom);
         chatMessage.setSender(sender);
         chatMessage.setReceiver(receiver);
         chatMessage.setContent(content);
-
         chatMessageRepository.save(chatMessage);
 
-        // 4) 응답 DTO에 값 채우기 (세션 내에서 값을 미리 꺼내기)
+        // 응답 DTO
         ChatMessageResponseDto responseDto = new ChatMessageResponseDto();
         responseDto.setChatRoomId(chatRoom.getId());
         responseDto.setSenderUsername(sender.getUsername());
@@ -65,11 +62,12 @@ public class PrivateChatController {
         responseDto.setContent(chatMessage.getContent());
         responseDto.setCreatedAt(chatMessage.getCreatedAt());
 
-        // 5) receiver의 username을 기준으로 /queue/private로 전송
-        messagingTemplate.convertAndSendToUser(
-                receiver.getUsername(),
-                "/queue/private",
+        // ================ 가장 중요한 부분 ================
+        // Topic으로 전송 -> "/topic/chatroom/{chatRoomId}"
+        messagingTemplate.convertAndSend(
+                "/topic/chatroom/" + chatRoomId,
                 responseDto
         );
+        // ===================================================
     }
 }
