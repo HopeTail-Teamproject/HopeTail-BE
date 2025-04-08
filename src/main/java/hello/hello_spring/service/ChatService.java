@@ -71,8 +71,4 @@ public class ChatService {
         return chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
     }
 
-    public ChatRoom getChatRoom(Long roomId) {
-        return chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found: " + roomId));
-    }
 }
