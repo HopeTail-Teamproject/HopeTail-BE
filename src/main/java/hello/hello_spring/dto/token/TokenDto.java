@@ -1,8 +1,9 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.token;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+
 import java.util.Date;
 
 @Getter

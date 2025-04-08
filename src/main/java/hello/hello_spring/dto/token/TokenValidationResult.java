@@ -1,6 +1,6 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.token;
 
-import hello.hello_spring.domain.jwt.token.Token.Type;
+import hello.hello_spring.domain.jwt.token.TokenType;
 import hello.hello_spring.domain.jwt.token.TokenStatus;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.ToString;
 public class TokenValidationResult {
     private TokenStatus tokenStatus;
     private String tokenId;
-    private Type tokenType;
+    private TokenType tokenType;
     private Claims claims;
 
     public String getEmail() {

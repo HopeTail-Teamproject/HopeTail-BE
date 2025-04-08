@@ -2,7 +2,7 @@ package hello.hello_spring.domain.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.hello_spring.domain.jwt.token.TokenStatus;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import hello.hello_spring.web.json.ApiResponseJson;
 import hello.hello_spring.web.json.ResponseStatusCode;
 import jakarta.servlet.ServletException;
@@ -31,7 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
 
         switch (result.getTokenStatus()) {
             case TOKEN_EXPIRED -> errorCode = ResponseStatusCode.TOKEN_EXPIRED;
-            case TOKEN_ABANDONED -> errorCode = ResponseStatusCode.TOKEN_ABANDONED;
+            case TOKEN_BLACKLISTED -> errorCode = ResponseStatusCode.TOKEN_ABANDONED;
             case TOKEN_WRONG_SIGNATURE -> errorCode = ResponseStatusCode.TOKEN_WRONG_SIGNATURE;
             case TOKEN_HASH_NOT_SUPPORTED -> errorCode = ResponseStatusCode.TOKEN_HASH_NOT_SUPPORTED;
             case NO_AUTH_HEADER -> errorCode = ResponseStatusCode.NO_AUTH_HEADER;
@@ -42,6 +42,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
         }
 
         sendError(response, errorMessage, errorCode);
+
     }
 
     private void sendError(HttpServletResponse response, String msg, int code) throws IOException {

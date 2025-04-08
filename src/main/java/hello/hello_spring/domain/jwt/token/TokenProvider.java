@@ -1,10 +1,11 @@
 package hello.hello_spring.domain.jwt.token;
 
 
+import hello.hello_spring.domain.jwt.blacklist.AccessTokenBlackList;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.member.MemberPrinciple;
-import hello.hello_spring.dto.TokenDto;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenDto;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -28,18 +29,22 @@ public class TokenProvider {
     private static final String TOKEN_ID_KEY = "tokenId";
     private final Key hashKey;
     private final long TokenValidationInMilliseconds;
+    private final AccessTokenBlackList accessTokenBlackList;
 
-    public TokenProvider(String secrete, long TokenValidationInSeconds) {
+    public TokenProvider(String secrete, long TokenValidationInSeconds, AccessTokenBlackList accessTokenBlackList) {
         byte[] keyBytes = Decoders.BASE64.decode(secrete);
         this.hashKey = Keys.hmacShaKeyFor(keyBytes);
         this.TokenValidationInMilliseconds = TokenValidationInSeconds * 1000;
+        this.accessTokenBlackList = accessTokenBlackList;
     }
 
     public TokenDto createToken(Member member) {
         long currentTime = (new Date()).getTime();
 
-        Date TokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds);
+        Date accessTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds);
+        Date refreshTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds * 24 * 10);
         String tokenId = UUID.randomUUID().toString();
+
 
         // Access 토큰
         String accessToken = Jwts.builder()
@@ -48,10 +53,18 @@ public class TokenProvider {
                 .claim(USERNAME_KEY, member.getUsername())
                 .claim(TOKEN_ID_KEY, tokenId)
                 .signWith(hashKey, SignatureAlgorithm.HS512)
-                .setExpiration(TokenExpireTime)
+                .setExpiration(accessTokenExpireTime)
                 .compact();
 
         // Refresh 토큰
+        String refreshToken = Jwts.builder()
+                .setSubject(member.getEmail())
+                .claim(AUTHORITIES_KEY, member.getRole())
+                .claim(USERNAME_KEY, member.getUsername())
+                .claim(TOKEN_ID_KEY, tokenId)
+                .signWith(hashKey, SignatureAlgorithm.HS512)
+                .setExpiration(refreshTokenExpireTime)
+                .compact();
 
         // Certification 토큰
 
@@ -80,7 +93,7 @@ public class TokenProvider {
                 .email(member.getEmail())
                 .Token(accessToken)
                 .tokenId(tokenId)
-                .tokenExpiredAt(TokenExpireTime)
+                .tokenExpiredAt(accessTokenExpireTime)
                 .build();
 
     }
@@ -90,7 +103,7 @@ public class TokenProvider {
             Claims claims = Jwts.parser().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
             return new TokenValidationResult(TokenStatus.TOKEN_VALID,
                     claims.get(TOKEN_ID_KEY, String.class),
-                    Token.Type.ACCESS,
+                    TokenType.ACCESS,
                     claims);
         } catch (ExpiredJwtException e) {
             log.info("만료된 jwt 토큰");
@@ -125,7 +138,15 @@ public class TokenProvider {
         Claims claims = e.getClaims();
         return new TokenValidationResult(TokenStatus.TOKEN_EXPIRED,
                 claims.get(TOKEN_ID_KEY, String.class),
-                Token.Type.ACCESS,
+                TokenType.ACCESS,
                 null); // null 변동가능 (향후 claims 활용 시) //
+    }
+
+    public boolean isAccessTokenBlackList(String accessToken) {
+        if (accessTokenBlackList.isBlackList(accessToken)) {
+            log.info("BlackListed Access Token");
+            return true;
+        }
+        return false;
     }
 }

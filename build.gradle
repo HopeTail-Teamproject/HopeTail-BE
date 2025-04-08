@@ -40,6 +40,9 @@ dependencies {
 	// dotenv 추가
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
+	// redis 추가
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

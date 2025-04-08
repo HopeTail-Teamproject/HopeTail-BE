@@ -2,14 +2,16 @@ package hello.hello_spring.domain.jwt;
 
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.jwt.token.TokenStatus;
-import hello.hello_spring.dto.TokenValidationResult;
+import hello.hello_spring.dto.token.TokenValidationResult;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,10 +26,11 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private static final String AUTORIZATION_HEADER = "Autorization";
+    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_REGEX = "Bearer ([a-zA-Z0-9_\\-+/=]+)\\.([a-zA-Z0-9_\\-+/=]+)\\.([a-zA-Z0-9_.\\-+/=]*)";
     private static final Pattern BEARER_PATTERN = Pattern.compile(BEARER_REGEX);
     private final TokenProvider tokenProvider;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -46,7 +49,18 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (tokenProvider.isAccessTokenBlackList(token)) {
+            handleBlackListedToken(request, response, filterChain);
+            return;
+        }
+
         handleValidToken(token, result.getClaims());
+        filterChain.doFilter(request, response);
+    }
+
+    private void handleBlackListedToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        request.setAttribute("result", new TokenValidationResult(TokenStatus.TOKEN_BLACKLISTED, null, null, null));
         filterChain.doFilter(request, response);
     }
 
@@ -73,10 +87,12 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTORIZATION_HEADER);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && BEARER_PATTERN.matcher(bearerToken).matches()) {
             return bearerToken.substring(7);
         }
         return null;
     }
+
+
 }

@@ -7,7 +7,7 @@ public enum TokenStatus {
     TOKEN_VALID("유효한 토큰입니다."),
 
     TOKEN_EXPIRED("만료된 토큰입니다."),
-    TOKEN_ABANDONED("폐기된 토큰입니다."),
+    TOKEN_BLACKLISTED("폐기된 토큰입니다."),
 
     TOKEN_WRONG_SIGNATURE("잘못된 토큰입니다."),
     TOKEN_HASH_NOT_SUPPORTED("지원하지 않는 형식의 토큰입니다."),
