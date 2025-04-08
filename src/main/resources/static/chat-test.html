@@ -1,77 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chat Test - 1:1 Private Chat</title>
-  <!-- 1. SockJS 먼저 로드 (로컬 파일) -->
+  <title>Topic-Based Chat (Single Page for A & B)</title>
   <script src="/js/sockjs.min.js"></script>
-  <!-- 2. STOMP.js 로드 (로컬 파일) -->
   <script src="/js/stomp.umd.js"></script>
 </head>
 <body>
-<div>
-  <input type="text" id="roomId" placeholder="Room ID">
-  <input type="text" id="senderId" placeholder="Sender ID">
-  <!-- 개인 채팅을 위해 받는 사람 ID 추가 -->
-  <input type="text" id="receiverId" placeholder="Receiver ID">
-  <input type="text" id="content" placeholder="Message">
-  <button onclick="sendPrivateMessage()">Send Private</button>
+<h1>Topic Chat Test on a Single Page</h1>
+
+<!-- =============== USER A SECTION =============== -->
+<div style="border:1px solid #ccc; padding:10px; margin:10px;">
+  <h2>User A</h2>
+  <div>
+    <label>ChatRoom ID: <input type="text" id="roomA" value="2"></label><br/>
+    <label>Sender ID: <input type="text" id="senderA" value="1"></label><br/>
+    <label>Receiver ID (optional): <input type="text" id="receiverA" value="2"></label><br/>
+    <button onclick="connectA()">Connect A</button>
+    <button onclick="disconnectA()">Disconnect A</button>
+  </div>
+  <hr/>
+  <div>
+    <input type="text" id="msgA" placeholder="A's Message">
+    <button onclick="sendA()">Send as A</button>
+  </div>
+  <div id="logA" style="background:#f9f9f9; min-height:80px; margin-top:10px; padding:5px;">
+    <strong>Logs (A):</strong><br/>
+  </div>
 </div>
-<div id="chatLogs"></div>
+
+<!-- =============== USER B SECTION =============== -->
+<div style="border:1px solid #ccc; padding:10px; margin:10px;">
+  <h2>User B</h2>
+  <div>
+    <label>ChatRoom ID: <input type="text" id="roomB" value="2"></label><br/>
+    <label>Sender ID: <input type="text" id="senderB" value="2"></label><br/>
+    <label>Receiver ID (optional): <input type="text" id="receiverB" value="1"></label><br/>
+    <button onclick="connectB()">Connect B</button>
+    <button onclick="disconnectB()">Disconnect B</button>
+  </div>
+  <hr/>
+  <div>
+    <input type="text" id="msgB" placeholder="B's Message">
+    <button onclick="sendB()">Send as B</button>
+  </div>
+  <div id="logB" style="background:#f9f9f9; min-height:80px; margin-top:10px; padding:5px;">
+    <strong>Logs (B):</strong><br/>
+  </div>
+</div>
 
 <script>
-  var stompClient = null;
+  // stompClients
+  let stompClientA = null;
+  let stompClientB = null;
 
-  function connect() {
-    var socket = new SockJS('/ws-stomp');
-    // UMD 빌드는 전역 객체로 StompJs를 생성하므로 StompJs.Stomp 사용
-    stompClient = StompJs.Stomp.over(socket);
+  // ---------------------- USER A ----------------------
+  function connectA() {
+    const socketA = new SockJS('/ws-stomp');
+    stompClientA = StompJs.Stomp.over(socketA);
 
-    stompClient.connect({}, function(frame) {
-      console.log('Connected: ' + frame);
+    stompClientA.connect({}, function(frame) {
+      logA("Connected A: " + frame);
 
-      // 그룹 채팅 구독 (모든 사용자에게 브로드캐스트)
-      stompClient.subscribe('/topic/chat', function(message) {
-        var msgObj = JSON.parse(message.body);
-        document.getElementById("chatLogs").innerHTML +=
-                "<p><b>Group Received (" + msgObj.senderId + ")</b>: " + msgObj.content + "</p>";
-      });
-
-      // 개인 채팅 구독 (현재 사용자에게만 전달됨; 서버에서는 "/user/queue/private"로 전송)
-      stompClient.subscribe('/user/queue/private', function(message) {
-        var msgObj = JSON.parse(message.body);
-        document.getElementById("chatLogs").innerHTML +=
-                "<p><b>Private Received (" + msgObj.senderId + ")</b>: " + msgObj.content + "</p>";
+      // A가 "/topic/chatroom/{roomId}"를 구독
+      const roomId = document.getElementById("roomA").value;
+      stompClientA.subscribe("/topic/chatroom/" + roomId, function(message) {
+        const msgObj = JSON.parse(message.body);
+        logA("Received >> from: " + msgObj.senderUsername + " - " + msgObj.content);
       });
     });
   }
 
-  function sendPrivateMessage() {
-    var roomId = document.getElementById('roomId').value;
-    var senderId = document.getElementById('senderId').value;
-    var receiverId = document.getElementById('receiverId').value;
-    var content = document.getElementById('content').value;
-
-    // 보내는 즉시 화면에 표시 (내가 보낸 메시지)
-    document.getElementById("chatLogs").innerHTML +=
-            "<p><b>Sent Private (" + senderId + " -> " + receiverId + ")</b>: " + content + "</p>";
-
-    // 개인 메시지는 /app/chat/private 엔드포인트로 전송 (서버의 PrivateChatController에서 처리)
-    stompClient.send("/app/chat/private", {}, JSON.stringify({
-      chatRoomId: roomId,
-      senderId: senderId,
-      receiverId: receiverId, // 수신자 ID 추가
-      content: content
-    }));
+  function disconnectA() {
+    if (stompClientA !== null) {
+      stompClientA.disconnect();
+      stompClientA = null;
+    }
+    logA("Disconnected A");
   }
 
-  window.onload = connect;
+  function sendA() {
+    if (!stompClientA) {
+      alert("User A is not connected!");
+      return;
+    }
+    const roomId    = document.getElementById("roomA").value;
+    const senderId  = document.getElementById("senderA").value;
+    const receiverId= document.getElementById("receiverA").value;
+    const content   = document.getElementById("msgA").value;
 
-  // 진단용: SockJS와 StompJs.Stomp가 제대로 로드되었는지 확인
-  window.addEventListener('load', () => {
-    console.log('SockJS = ', window.SockJS);
-    console.log('StompJs = ', window.StompJs);
-    console.log('StompJs.Stomp = ', window.StompJs?.Stomp);
-  });
+    logA("Sent >> " + content);
+
+    const payload = {
+      chatRoomId: parseInt(roomId),
+      senderId: parseInt(senderId),
+      receiverId: parseInt(receiverId),
+      content: content
+    };
+
+    // 서버로 전송(@MessageMapping("/chat/private") 메서드에서 처리)
+    stompClientA.send("/app/chat/private", {}, JSON.stringify(payload));
+    document.getElementById("msgA").value = "";
+  }
+
+  function logA(msg) {
+    const logDiv = document.getElementById("logA");
+    logDiv.innerHTML += msg + "<br/>";
+  }
+
+  // ---------------------- USER B ----------------------
+  function connectB() {
+    const socketB = new SockJS('/ws-stomp');
+    stompClientB = StompJs.Stomp.over(socketB);
+
+    stompClientB.connect({}, function(frame) {
+      logB("Connected B: " + frame);
+
+      // B가 "/topic/chatroom/{roomId}"를 구독
+      const roomId = document.getElementById("roomB").value;
+      stompClientB.subscribe("/topic/chatroom/" + roomId, function(message) {
+        const msgObj = JSON.parse(message.body);
+        logB("Received >> from: " + msgObj.senderUsername + " - " + msgObj.content);
+      });
+    });
+  }
+
+  function disconnectB() {
+    if (stompClientB !== null) {
+      stompClientB.disconnect();
+      stompClientB = null;
+    }
+    logB("Disconnected B");
+  }
+
+  function sendB() {
+    if (!stompClientB) {
+      alert("User B is not connected!");
+      return;
+    }
+    const roomId    = document.getElementById("roomB").value;
+    const senderId  = document.getElementById("senderB").value;
+    const receiverId= document.getElementById("receiverB").value;
+    const content   = document.getElementById("msgB").value;
+
+    logB("Sent >> " + content);
+
+    const payload = {
+      chatRoomId: parseInt(roomId),
+      senderId: parseInt(senderId),
+      receiverId: parseInt(receiverId),
+      content: content
+    };
+
+    // 서버로 전송
+    stompClientB.send("/app/chat/private", {}, JSON.stringify(payload));
+    document.getElementById("msgB").value = "";
+  }
+
+  function logB(msg) {
+    const logDiv = document.getElementById("logB");
+    logDiv.innerHTML += msg + "<br/>";
+  }
 </script>
 </body>
 </html>

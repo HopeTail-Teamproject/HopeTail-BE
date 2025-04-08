@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,33 +23,36 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String passwordHash;
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdat;
 
     @UpdateTimestamp
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedat;
 
-    @Column
-    private String address;
-
-//    @Enumerated(EnumType.STRING)
-//    @ColumnDefault("PENDING")
-//    private Status status;
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'PENDING'")
+    private Status status;
 
     @Column
     private LocalDateTime lastLogin;
+
+    @ColumnDefault("0")
+    private boolean emailCertified;
+
+    @ColumnDefault("0")
+    private boolean phoneCertified;
 
     private String profileImage; // nullable
 
@@ -73,21 +77,10 @@ public class Member {
     public enum Role {
         USER, ADMIN
     }
-
-//    public enum Status {
-//        ACTIVE,
-//        INACTIVE,
-//        PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-//    }
-
-    @Builder
-    public Member(String username, String email, String password, Role role, String address, String phoneNumber){
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
-    }
 }
 
+enum Status {
+    ACTIVE,
+    INACTIVE,
+    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+}

@@ -9,15 +9,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // 클라이언트가 구독할 destination prefix (그룹 채팅과 개인 채팅 모두)
+        // enableSimpleBroker에 "/topic"을 반드시 포함해야 함
         registry.enableSimpleBroker("/topic", "/queue");
-        // 클라이언트가 메시지를 보낼 때 붙일 prefix
         registry.setApplicationDestinationPrefixes("/app");
-        // 사용자 전용 destination의 접두사 설정 (보통 "/user"를 사용)
-        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
