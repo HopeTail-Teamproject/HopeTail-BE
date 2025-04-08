@@ -31,17 +31,15 @@ public class Pet {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String image; // 이미지 URL or 파일 경로
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.WAITING;
 
-    // 등록한 사람 (ManyToOne)
     @ManyToOne
-    @JoinColumn(name = "registered_by", nullable = false)
-    private Member registeredBy;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    // 입양 신청들 (OneToMany)
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Adoption> adoptions;
 
@@ -53,3 +51,4 @@ public class Pet {
         WAITING, ADOPTED
     }
 }
+
