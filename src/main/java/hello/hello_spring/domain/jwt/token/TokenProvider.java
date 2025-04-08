@@ -41,9 +41,9 @@ public class TokenProvider {
     public TokenDto createToken(Member member) {
         long currentTime = (new Date()).getTime();
 
-        Date TokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds);
+        Date accessTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds);
+        Date refreshTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds * 24 * 10);
         String tokenId = UUID.randomUUID().toString();
-
 
 
         // Access 토큰
@@ -53,10 +53,18 @@ public class TokenProvider {
                 .claim(USERNAME_KEY, member.getUsername())
                 .claim(TOKEN_ID_KEY, tokenId)
                 .signWith(hashKey, SignatureAlgorithm.HS512)
-                .setExpiration(TokenExpireTime)
+                .setExpiration(accessTokenExpireTime)
                 .compact();
 
         // Refresh 토큰
+        String refreshToken = Jwts.builder()
+                .setSubject(member.getEmail())
+                .claim(AUTHORITIES_KEY, member.getRole())
+                .claim(USERNAME_KEY, member.getUsername())
+                .claim(TOKEN_ID_KEY, tokenId)
+                .signWith(hashKey, SignatureAlgorithm.HS512)
+                .setExpiration(refreshTokenExpireTime)
+                .compact();
 
         // Certification 토큰
 
@@ -85,7 +93,7 @@ public class TokenProvider {
                 .email(member.getEmail())
                 .Token(accessToken)
                 .tokenId(tokenId)
-                .tokenExpiredAt(TokenExpireTime)
+                .tokenExpiredAt(accessTokenExpireTime)
                 .build();
 
     }
