@@ -44,9 +44,9 @@ public class Member {
     @Column
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    @ColumnDefault("'PENDING'")
-    private Status status;
+//    @Enumerated(EnumType.STRING)
+//    @ColumnDefault("'PENDING'")
+//    private Status status;
 
     @Column
     private LocalDateTime lastLogin;
@@ -92,8 +92,8 @@ public class Member {
     }
 }
 
-enum Status {
-    ACTIVE,
-    INACTIVE,
-    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-}
+//enum Status {
+//    ACTIVE,
+//    INACTIVE,
+//    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+//}

@@ -5,10 +5,12 @@ import hello.hello_spring.dto.PostResponseDto;
 import hello.hello_spring.dto.PostUpdateRequestDto;
 import hello.hello_spring.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/posts")

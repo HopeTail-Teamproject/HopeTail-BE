@@ -21,14 +21,14 @@ public class PostService {
     // 게시글 생성
     public PostResponseDto createPost(PostCreateRequestDto dto) {
         // 1. 작성자(Member) 조회
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+//        Member member = memberRepository.findById(dto.getMemberId())
+//                .orElseThrow(() -> new RuntimeException("Member not found"));
 
         // 2. 엔티티 생성
         Post post = new Post();
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
-        post.setMember(member);
+        //post.setMember(member);
         post.setCategory(Post.Category.valueOf(dto.getCategory().toUpperCase()));
 
         // 3. 저장
