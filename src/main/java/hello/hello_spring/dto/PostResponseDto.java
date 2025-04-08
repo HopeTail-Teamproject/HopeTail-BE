@@ -21,6 +21,6 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.category = post.getCategory().name();
         this.createdAt = post.getCreatedAt();
-        this.memberId = post.getMember().getId();
+//        this.memberId = post.getMember().getId();
     }
 }

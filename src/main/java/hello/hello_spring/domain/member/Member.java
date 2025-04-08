@@ -59,9 +59,9 @@ public class Member {
     @Column(nullable = false)
     private Role role = Role.USER;
 
-    // 관계 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+//    // 관계 매핑
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Post> posts;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
