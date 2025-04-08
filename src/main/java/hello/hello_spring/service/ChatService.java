@@ -60,6 +60,10 @@ public class ChatService {
         return chatMessageRepository.save(chatMessage);
     }
 
+    public ChatRoom getChatRoom(Long roomId) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("ChatRoom not found: " + roomId));
+    }
     /**
      * 채팅 메시지 조회
      */
