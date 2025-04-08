@@ -44,10 +44,6 @@ public class Member {
     @Column
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    @ColumnDefault("'PENDING'")
-    private Status status;
-
     @Column
     private LocalDateTime lastLogin;
 
