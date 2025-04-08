@@ -92,8 +92,8 @@ public class Member {
     }
 }
 
-//enum Status {
-//    ACTIVE,
-//    INACTIVE,
-//    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-//}
+enum Status {
+    ACTIVE,
+    INACTIVE,
+    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+}

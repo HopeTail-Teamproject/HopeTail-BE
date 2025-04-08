@@ -26,7 +26,13 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtFilter jwtFilter;
     private final String[] adminUrl = {"/admin/**"};
-    private final String[] permitAllUrl = {"/error", "/api/account/auth"};
+    private final String[] permitAllUrl = {
+            "/error",
+            "/api/account/auth",
+            "/ws-stomp/**",         // ✅ WebSocket 연결 허용 추가
+            "/chat-test.html",      // ✅ 테스트용 HTML 페이지도 허용
+            "/js/**"                // ✅ JS 파일도 허용 (stomp.js, sockjs.js 등)
+    };
     private final String[] anonymousUrl = {"/api/account/create"};
 
     @Bean

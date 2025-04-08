@@ -55,7 +55,8 @@
 
   // ---------------------- USER A ----------------------
   function connectA() {
-    const socketA = new SockJS('/ws-stomp');
+    const tokenA = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaG9jb21pbjAyMTFAaGFueWFuZy5hYy5rciIsImF1dGgiOiJVU0VSIiwidXNlcm5hbWUiOiJtaW5zdW5nIiwidG9rZW5JZCI6IjFiY2NkYWI2LWU0MDEtNDJjYS04ZTI5LWEzNDFhNjk2YWFjMCIsImV4cCI6MTc0NDEzNzQ0Nn0.8yta7dB5qqGgTwwyvGWBio4hwwdTeSx2w97y6msYE82YrcYHNoM7F4u2P9zAd5hF5SdCP3iTWWG03ciktHYsZw"; // 실제 토큰 입력
+    const socketA = new SockJS('/ws-stomp?token=Bearer ' + tokenA);  // 토큰을 쿼리 파라미터로 전달
     stompClientA = StompJs.Stomp.over(socketA);
 
     stompClientA.connect({}, function(frame) {
@@ -109,7 +110,8 @@
 
   // ---------------------- USER B ----------------------
   function connectB() {
-    const socketB = new SockJS('/ws-stomp');
+    const tokenB = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaW5zdW5nbGVlOTExQGdtYWlsLmNvbSIsImF1dGgiOiJVU0VSIiwidXNlcm5hbWUiOiJra3MiLCJ0b2tlbklkIjoiN2ZmOWFhYTAtZTg2Mi00NTVmLWJjMjMtMDliMmZmMjAzZmVhIiwiZXhwIjoxNzQ0MTM3NDY2fQ.ah-3N883VglYXCVOrvyMQshkxs7BRK_oxXxSb7I5wgws_DaKWoCLxH2BTqSnJ8BR9wWJwSzIYLsLuabZR8Ig9A"; // 실제 토큰 입력
+    const socketB = new SockJS('/ws-stomp?token=Bearer ' + tokenB);  // 토큰을 쿼리 파라미터로 전달
     stompClientB = StompJs.Stomp.over(socketB);
 
     stompClientB.connect({}, function(frame) {
