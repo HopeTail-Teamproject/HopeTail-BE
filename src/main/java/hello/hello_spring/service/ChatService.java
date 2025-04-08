@@ -66,4 +66,9 @@ public class ChatService {
     public List<ChatMessage> getMessages(Long chatRoomId) {
         return chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
     }
+
+    public ChatRoom getChatRoom(Long roomId) {
+        return chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("ChatRoom not found: " + roomId));
+    }
 }

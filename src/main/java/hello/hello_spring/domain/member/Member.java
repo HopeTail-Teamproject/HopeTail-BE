@@ -30,7 +30,7 @@ public class Member {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
@@ -40,6 +40,9 @@ public class Member {
 
     @UpdateTimestamp
     private LocalDateTime updatedat;
+
+    @Column
+    private String address;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'PENDING'")
@@ -76,6 +79,16 @@ public class Member {
     // 사용자 권한 enum
     public enum Role {
         USER, ADMIN
+    }
+
+    @Builder
+    public Member(String username, String email, String password, Role role, String address, String phoneNumber){
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
     }
 }
 
