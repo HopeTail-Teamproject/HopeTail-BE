@@ -1,7 +1,7 @@
 package hello.hello_spring.controller;
 
-import hello.hello_spring.dto.PrivateChatMessageDto;
-import hello.hello_spring.dto.ChatMessageResponseDto;
+import hello.hello_spring.dto.chat.PrivateChatMessageDto;
+import hello.hello_spring.dto.chat.ChatMessageResponseDto;
 import hello.hello_spring.domain.ChatMessage;
 import hello.hello_spring.domain.ChatRoom;
 import hello.hello_spring.domain.member.Member;

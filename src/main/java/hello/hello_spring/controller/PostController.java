@@ -1,8 +1,8 @@
 package hello.hello_spring.controller;
 
-import hello.hello_spring.dto.PostCreateRequestDto;
-import hello.hello_spring.dto.PostResponseDto;
-import hello.hello_spring.dto.PostUpdateRequestDto;
+import hello.hello_spring.dto.post.PostCreateRequestDto;
+import hello.hello_spring.dto.post.PostResponseDto;
+import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

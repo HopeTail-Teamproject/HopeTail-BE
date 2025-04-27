@@ -1,8 +1,9 @@
 package hello.hello_spring.service;
 
-import hello.hello_spring.dto.*;
-import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.Post;
+import hello.hello_spring.dto.post.PostCreateRequestDto;
+import hello.hello_spring.dto.post.PostResponseDto;
+import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.PostRepository;
 import lombok.RequiredArgsConstructor;

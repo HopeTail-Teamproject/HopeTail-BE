@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.post;
 
 import hello.hello_spring.domain.Post;
 import lombok.Data;

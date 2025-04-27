@@ -1,13 +1,14 @@
 package hello.hello_spring.controller;
 
 import hello.hello_spring.domain.member.Member;
+import hello.hello_spring.dto.pet.PetCreateRequestDto;
+import hello.hello_spring.dto.pet.PetResponseDto;
 import hello.hello_spring.service.PetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import hello.hello_spring.dto.*;
 
 import java.util.List;
 

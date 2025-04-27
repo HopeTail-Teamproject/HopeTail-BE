@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.comment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

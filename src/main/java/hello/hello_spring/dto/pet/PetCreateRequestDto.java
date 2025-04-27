@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.pet;
 
 import hello.hello_spring.domain.Pet;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package hello.hello_spring.service;
 
-import hello.hello_spring.dto.CommentCreateRequestDto;
-import hello.hello_spring.dto.CommentResponseDto;
+import hello.hello_spring.dto.comment.CommentCreateRequestDto;
+import hello.hello_spring.dto.comment.CommentResponseDto;
 import hello.hello_spring.domain.Comment;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.Post;
