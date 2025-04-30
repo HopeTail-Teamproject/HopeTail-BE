@@ -84,6 +84,15 @@ public class LoginService {
             TokenDto accessTokenDto = tokenProvider.createAccessToken(member);
             TokenDto refreshTokenDto = tokenProvider.createRefreshToken(member);
 
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .tokenId(refreshTokenDto.getTokenId())
+                    .Token(refreshTokenDto.getToken())
+                    .member(member)
+                    .email(email)
+                    .build();
+
+            refreshTokenRepository.save(refreshToken);
+
             if (rememberMe) {
                 ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshTokenDto.getToken())
                         .httpOnly(true)
@@ -99,14 +108,6 @@ public class LoginService {
             }
 
             else {
-                RefreshToken refreshToken = RefreshToken.builder()
-                        .tokenId(refreshTokenDto.getTokenId())
-                        .Token(refreshTokenDto.getToken())
-                        .member(member)
-                        .email(email)
-                        .build();
-
-                refreshTokenRepository.save(refreshToken);
                 return new LoginResponseDto(accessTokenDto, refreshTokenDto);
             }
 
