@@ -280,10 +280,10 @@ public class ChatMessage {
   ```
   (실제로는 JPA가 `ddl-auto: update`에 따라 생성/수정해줄 것입니다.)
 
+  ```
   // 메시지 내용
   @Column(nullable = false)
   private String content;
- ---
 
      @CreationTimestamp
      private LocalDateTime createdAt;
