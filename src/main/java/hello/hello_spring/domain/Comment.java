@@ -2,6 +2,7 @@ package hello.hello_spring.domain;
 
 import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +31,10 @@ public class Comment {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
+
+    @Email
+    @Column
+    private String email;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }

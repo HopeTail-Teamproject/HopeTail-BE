@@ -4,6 +4,7 @@ import hello.hello_spring.dto.comment.CommentCreateRequestDto;
 import hello.hello_spring.dto.comment.CommentResponseDto;
 import hello.hello_spring.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ public class CommentController {
     @Operation(summary = "댓글 생성 (게시글 ID 필요)")
     @PostMapping("/posts/{postId}/comments")
     public CommentResponseDto createComment(@PathVariable Long postId,
-                                            @RequestBody CommentCreateRequestDto dto) {
-        return commentService.createComment(postId, dto);
+                                            @RequestBody CommentCreateRequestDto dto,
+                                            HttpServletRequest request) {
+        return commentService.createComment(postId, dto, request);
     }
 
     @Operation(summary = "특정 게시글의 댓글 목록 조회")
@@ -37,7 +39,7 @@ public class CommentController {
 
     @Operation(summary = "댓글 삭제")
     @DeleteMapping("/comments/{commentId}")
-    public void deleteComment(@PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+    public void deleteComment(@PathVariable Long commentId, HttpServletRequest request) {
+        commentService.deleteComment(commentId, request);
     }
 }
