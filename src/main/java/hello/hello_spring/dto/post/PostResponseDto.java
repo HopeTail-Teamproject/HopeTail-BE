@@ -13,6 +13,7 @@ public class PostResponseDto {
     private String category;
     private LocalDateTime createdAt;
     private Long memberId; // 작성자 ID
+    private String email;
 
     // 엔티티 -> DTO 변환
     public PostResponseDto(Post post) {
@@ -21,6 +22,7 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.category = post.getCategory().name();
         this.createdAt = post.getCreatedAt();
+        this.email = post.getEmail();
 //        this.memberId = post.getMember().getId();
     }
 }

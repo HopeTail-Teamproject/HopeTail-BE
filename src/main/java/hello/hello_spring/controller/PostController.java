@@ -6,6 +6,7 @@ import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,8 @@ public class PostController {
 
     @Operation(summary = "게시글 생성")
     @PostMapping
-    public PostResponseDto createPost(@RequestBody PostCreateRequestDto dto) {
-        return postService.createPost(dto);
+    public PostResponseDto createPost(@RequestBody PostCreateRequestDto dto, HttpServletRequest request) {
+        return postService.createPost(dto, request);
     }
 
     @Operation(summary = "게시글 전체 조회")
@@ -40,14 +41,15 @@ public class PostController {
     @Operation(summary = "게시글 수정")
     @PutMapping("/{postId}")
     public PostResponseDto updatePost(@PathVariable Long postId,
-                                      @RequestBody PostUpdateRequestDto dto) {
-        return postService.updatePost(postId, dto);
+                                      @RequestBody PostUpdateRequestDto dto,
+                                      HttpServletRequest request) {
+        return postService.updatePost(postId, dto, request);
     }
 
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{postId}")
-    public void deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public void deletePost(@PathVariable Long postId, HttpServletRequest request) {
+        postService.deletePost(postId, request);
     }
 
     @Operation(summary = "카테고리별 게시글 조회")

@@ -24,6 +24,9 @@ public class Post {
 //    @JoinColumn(name = "member_id", nullable = false)
 //    private Member member;
 
+    @Column
+    private String email;
+
     @Column(nullable = false)
     private String title;
 
