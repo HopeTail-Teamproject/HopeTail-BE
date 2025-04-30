@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>HopeTail 1:1 Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@7/umd/stomp.umd.min.js"></script>
+    <style>
+        *{box-sizing:border-box} body{margin:0;font-family:sans-serif;height:100vh;display:flex;flex-direction:column}
+        header{padding:10px;background:#0a7;color:#fff;font-weight:bold}
+        #setup{padding:12px;border-bottom:1px solid #ccc}
+        #chatBox{flex:1;display:flex;flex-direction:column}
+        #msgs{flex:1;padding:12px;overflow-y:auto}
+        .msg{margin:6px 0}.me{color:#0a7;text-align:right}.you{color:#07a;text-align:left}
+        #inputBar{display:flex;border-top:1px solid #ccc}
+        #inputBar input{flex:1;border:none;padding:10px;font-size:14px}
+        #inputBar button{width:80px;border:none;background:#0a7;color:#fff}
+    </style>
+</head>
+<body>
+
+<header>HopeTail Chat</header>
+
+<!-- 1. 상대 이메일 입력 영역 -->
+<section id="setup">
+    <label>상대 이메일 :
+        <input id="partner" placeholder="example@hope.com" style="width:220px">
+    </label>
+    <button id="makeRoomBtn">채팅 시작</button>
+    <span id="status" style="margin-left:8px;color:#07a"></span>
+</section>
+
+<!-- 2. 채팅 영역 -->
+<section id="chatBox" hidden>
+    <div id="msgs"></div>
+    <div id="inputBar">
+        <input id="msgInput" placeholder="메시지 입력…">
+        <button id="sendBtn">전송</button>
+    </div>
+</section>
+
+<script>
+    /* ----- 설정 ----- */
+    const API   = '/api/chatrooms';   // 방 생성 REST
+    const WS_EP = '/ws-stomp';        // WebSocket
+    const SEND  = '/app/chat/private';
+    const SUB   = id => `/topic/chatroom/${id}`;
+    const JWT   = localStorage.getItem('accessToken') || '';
+
+    /* ----- 전역 상태 ----- */
+    let stomp = null;
+    let roomId = null;
+    let myEmail = null;     // 서버 토큰 decode가 필요하다면 payload에서 꺼내거나, 메시지 echo 로 파악
+
+    /* ----- 헬퍼 ----- */
+    const $ = id => document.getElementById(id);
+    const log  = (cls, txt) => {
+        const d=document.createElement('div'); d.className=`msg ${cls}`; d.textContent=txt;
+        const box=$('msgs'); box.appendChild(d); box.scrollTop=box.scrollHeight;
+    };
+
+    /* ----- 방 생성/재사용 버튼 ----- */
+    $('makeRoomBtn').onclick = async () => {
+        const partner = $('partner').value.trim();
+        if (!partner) return alert('상대 이메일을 입력하세요');
+
+        try {
+            /* REST로 방 생성(또는 재사용) */
+            const res = await fetch(API, {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer '+JWT
+                },
+                body: JSON.stringify({partnerEmail: partner})
+            });
+            if(!res.ok) throw new Error('방 생성 실패');
+            const room = await res.json();
+            roomId = room.chatRoomId;
+            $('status').textContent = `방 #${roomId} 연결 중…`;
+            connectWS(roomId);
+        } catch(e){
+            alert(e.message);
+        }
+    };
+
+    /* ----- WebSocket 연결 & 구독 ----- */
+    function connectWS(id){
+        const sock = new SockJS(WS_EP);
+        stomp = StompJs.Stomp.over(sock);
+        const hd = JWT ? {Authorization:'Bearer '+JWT}:{};
+
+        stomp.connect(hd, frame=>{
+            $('status').textContent = `방 #${id} 접속 완료`;
+            $('chatBox').hidden = false;
+
+            stomp.subscribe(SUB(id), msg=>{
+                const p = JSON.parse(msg.body);
+                if(!myEmail) myEmail = p.senderUsername;          // 최초 echo 로 내 이메일 추정
+                log(p.senderUsername===myEmail?'me':'you', p.content);
+            });
+        });
+    }
+
+    /* ----- 메시지 전송 ----- */
+    $('sendBtn').onclick = () => {
+        if(!stomp || !stomp.connected) return;
+        const txt = $('msgInput').value.trim(); if(!txt) return;
+        stomp.send(SEND, {}, JSON.stringify({chatRoomId: roomId, content: txt}));
+        log('me', txt);
+        $('msgInput').value='';
+    };
+</script>
+</body>
+</html>

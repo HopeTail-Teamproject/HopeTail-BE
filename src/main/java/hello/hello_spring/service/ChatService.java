@@ -1,12 +1,17 @@
 package hello.hello_spring.service;
 
+import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.repository.ChatMessageRepository;
 import hello.hello_spring.repository.ChatRoomRepository;
 import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.domain.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import io.jsonwebtoken.Claims;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,38 +23,47 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository; // 이미 있을 것으로 가정
+    private final TokenProvider tokenProvider;
 
-    /**
-     * 채팅방 생성 (1:1 기준)
-     * - 만약 이미 member1, member2가 있는 채팅방이 있다면 재사용
-     */
-    public ChatRoom createChatRoom(Long member1Id, Long member2Id) {
-        Member member1 = memberRepository.findById(member1Id)
-                .orElseThrow(() -> new RuntimeException("member1 not found"));
-        Member member2 = memberRepository.findById(member2Id)
-                .orElseThrow(() -> new RuntimeException("member2 not found"));
+    /* 채팅방 생성 (1:1 기준) */
+    @Transactional
+    public ChatRoom createChatRoom(HttpServletRequest request, String partnerEmail) {
 
-        // 이미 둘 사이의 채팅방이 있는지 확인
-        Optional<ChatRoom> existingRoom = chatRoomRepository.findByMember1AndMember2(member1, member2);
-        if (existingRoom.isPresent()) {
-            return existingRoom.get();
+        /* -------- (1) 내 e-mail 꺼내기 -------- */
+        String bearerToken = request.getHeader("Authorization");
+        String token = "";
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            token = bearerToken.substring(7);
         }
+        Claims claims = tokenProvider.getClaims(token);
+        String myEmail = claims.getSubject();                // ★ 내 e-mail
 
-        // 없다면 새로 생성
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setMember1(member1);
-        chatRoom.setMember2(member2);
-        return chatRoomRepository.save(chatRoom);
+        /* -------- (2) 이미 존재하는 방 찾기 -------- */
+        Optional<ChatRoom> existing =
+                chatRoomRepository.findByEmails(myEmail, partnerEmail); // ★ e-mail 두 개로 검색
+        if (existing.isPresent()) return existing.get();
+
+        /* -------- (3) 없으면 새로 만듦 -------- */
+        Member me      = memberRepository.findByEmail(myEmail)
+                .orElseThrow(() -> new RuntimeException("me not found"));
+        Member partner = memberRepository.findByEmail(partnerEmail)
+                .orElseThrow(() -> new RuntimeException("partner not found"));
+
+        ChatRoom newRoom = new ChatRoom();
+        newRoom.setMember1(me);
+        newRoom.setMember2(partner);
+
+        return chatRoomRepository.save(newRoom);
     }
 
     /**
      * 채팅 메시지 저장
      */
-    public ChatMessage saveMessage(Long chatRoomId, Long senderId, String content) {
+    public ChatMessage saveMessage(Long chatRoomId, String senderEmail, String content) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
 
-        Member sender = memberRepository.findById(senderId)
+        Member sender = memberRepository.findByEmail(senderEmail)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
         ChatMessage chatMessage = new ChatMessage();

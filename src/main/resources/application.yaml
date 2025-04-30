@@ -11,9 +11,9 @@ spring:
         format_sql: true
     database: mysql
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/hopetail-db?autoReconnect=true
+    username: user
+    password: 1234
 
   data:
     redis:
