@@ -20,14 +20,14 @@ public class TokenProviderTest {
 
     @Test
     void createToken() {
-        TokenDto tokenDto = tokenProvider.createToken(member);
+        TokenDto tokenDto = tokenProvider.createAccessToken(member);
         log.info("Token -> {}", tokenDto.getToken());
 
     }
 
     @Test
     void validateTokenValid() {
-        TokenDto tokenDto = tokenProvider.createToken(member);
+        TokenDto tokenDto = tokenProvider.createAccessToken(member);
         TokenValidationResult tokenValidationResult = tokenProvider.validateToken(tokenDto.getToken());
 
         Assertions.assertThat(tokenValidationResult.isValid()).isTrue();
@@ -35,7 +35,7 @@ public class TokenProviderTest {
 
     @Test
     void validateTokenNotValid() throws InterruptedException {
-        TokenDto tokenDto = tokenProvider.createToken(member);
+        TokenDto tokenDto = tokenProvider.createAccessToken(member);
         Thread.sleep(4000);
         TokenValidationResult tokenValidationResult = tokenProvider.validateToken(tokenDto.getToken());
 

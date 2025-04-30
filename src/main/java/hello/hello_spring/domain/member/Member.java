@@ -1,5 +1,6 @@
 package hello.hello_spring.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import hello.hello_spring.domain.*;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Getter
 @Setter

@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = resolveToken(request);
+
 
         if (!StringUtils.hasText(token)) {
             handleMissingToken(request, response, filterChain);
@@ -90,6 +92,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && BEARER_PATTERN.matcher(bearerToken).matches()) {
             return bearerToken.substring(7);
+        }
+
+        Cookie[] Cookies = request.getCookies();
+        if (Cookies != null) {
+            for (Cookie cookie : Cookies) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }
