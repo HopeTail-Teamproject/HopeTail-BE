@@ -1,12 +1,17 @@
 package hello.hello_spring.controller;
 
+import hello.hello_spring.domain.jwt.token.RefreshToken;
+import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.member.MemberPrinciple;
+import hello.hello_spring.dto.login.LoginResponseDto;
 import hello.hello_spring.dto.member.MemberCreateDto;
 import hello.hello_spring.dto.member.MemberLoginDto;
 import hello.hello_spring.dto.token.TokenDto;
 import hello.hello_spring.service.LoginService;
 import hello.hello_spring.web.json.ApiResponseJson;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,34 +49,53 @@ public class LoginController {
 
     @PostMapping("/api/account/auth")
     public ApiResponseJson authenticateAccountAndIssueToken(@Valid @RequestBody MemberLoginDto memberLoginDto,
+                                                            HttpServletResponse response,
                                                             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
 
-        TokenDto tokenDto = loginService.loginMember(memberLoginDto.getEmail(), memberLoginDto.getPassword());
-        log.info("Token issued for account: {}", tokenDto.getTokenId());
+        LoginResponseDto loginResponseDto = loginService.loginMember(memberLoginDto.getEmail(),
+                memberLoginDto.getPassword(),
+                memberLoginDto.isRememberMe(),
+                response);
 
-        return new ApiResponseJson(HttpStatus.OK, tokenDto);
+
+        log.info("Token issued for account: {}", loginResponseDto.getAccessToken().getTokenId());
+
+        return new ApiResponseJson(HttpStatus.OK, loginResponseDto);
     }
 
     @GetMapping("/api/account/userinfo")
     public ApiResponseJson getUserInfo(@AuthenticationPrincipal MemberPrinciple memberPrinciple) {
         log.info("요청 이메일 : {}", memberPrinciple.getEmail());
 
-        Member member = loginService.getUserInfo(memberPrinciple.getEmail());
+        Member userinfo = loginService.getUserInfo(memberPrinciple.getEmail());
 
-        return new ApiResponseJson(HttpStatus.OK, member);
+
+        return new ApiResponseJson(HttpStatus.OK, userinfo);
     }
 
     @PostMapping("/api/account/logout")
     public ApiResponseJson logoutUser(@AuthenticationPrincipal MemberPrinciple memberPrinciple,
-                                      @RequestHeader("Authorization") String authHeader) {
+                                      @RequestHeader("Authorization") String authHeader,
+                                      HttpServletResponse response) {
         log.info("로그아웃 요청 이메일 : {}", memberPrinciple.getEmail());
-
-        loginService.logout(authHeader.substring(7), memberPrinciple.getEmail());
+        RefreshToken refreshToken = loginService.findRefreshToken(memberPrinciple.getEmail());
+        loginService.logout(authHeader.substring(7), memberPrinciple.getEmail(),
+                refreshToken, response);
 
         return new ApiResponseJson(HttpStatus.OK, "OK. BYE~~");
+    }
+
+    // 토큰 재발급 api
+    @PostMapping("/api/account/auth/refresh")
+    public ApiResponseJson reissueToken(HttpServletRequest request) {
+        String refreshToken = loginService.extractRefreshToken(request);
+        String email = loginService.extractEmail(refreshToken);
+        TokenDto tokenDto = loginService.getNewToken(email);
+        return new ApiResponseJson(HttpStatus.OK, tokenDto);
+
     }
 
 }

@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.chat;
 
 import hello.hello_spring.domain.ChatRoom;
 import lombok.Getter;

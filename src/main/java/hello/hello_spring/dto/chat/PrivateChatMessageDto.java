@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.chat;
 
 import lombok.Getter;
 import lombok.Setter;

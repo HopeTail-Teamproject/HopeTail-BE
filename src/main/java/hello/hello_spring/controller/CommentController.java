@@ -1,7 +1,7 @@
 package hello.hello_spring.controller;
 
-import hello.hello_spring.dto.CommentCreateRequestDto;
-import hello.hello_spring.dto.CommentResponseDto;
+import hello.hello_spring.dto.comment.CommentCreateRequestDto;
+import hello.hello_spring.dto.comment.CommentResponseDto;
 import hello.hello_spring.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

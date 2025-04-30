@@ -1,11 +1,12 @@
 package hello.hello_spring.service;
 
 import hello.hello_spring.domain.Pet;
+import hello.hello_spring.dto.pet.PetCreateRequestDto;
+import hello.hello_spring.dto.pet.PetResponseDto;
 import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import hello.hello_spring.dto.*;
 import hello.hello_spring.domain.member.Member;
 
 import java.util.List;

@@ -20,9 +20,9 @@ public class Post {
     private Long id;
 
 //    // 작성자
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = true)
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "member_id", nullable = false)
+//    private Member member;
 
     @Column(nullable = false)
     private String title;

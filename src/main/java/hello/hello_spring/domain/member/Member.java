@@ -1,5 +1,6 @@
 package hello.hello_spring.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import hello.hello_spring.domain.*;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Getter
 @Setter
@@ -63,9 +65,9 @@ public class Member {
     @Column(nullable = false)
     private Role role = Role.USER;
 
-    // 관계 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+//    // 관계 매핑
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Post> posts;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;

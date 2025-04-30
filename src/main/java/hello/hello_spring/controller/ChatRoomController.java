@@ -1,8 +1,8 @@
 package hello.hello_spring.controller;
 
 import hello.hello_spring.domain.ChatRoom;
-import hello.hello_spring.dto.ChatRoomRequestDto;
-import hello.hello_spring.dto.ChatRoomResponseDto;
+import hello.hello_spring.dto.chat.ChatRoomRequestDto;
+import hello.hello_spring.dto.chat.ChatRoomResponseDto;
 import hello.hello_spring.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

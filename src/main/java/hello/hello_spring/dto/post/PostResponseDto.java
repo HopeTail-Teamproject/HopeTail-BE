@@ -1,4 +1,4 @@
-package hello.hello_spring.dto;
+package hello.hello_spring.dto.post;
 
 import hello.hello_spring.domain.Post;
 import lombok.Data;
@@ -12,7 +12,7 @@ public class PostResponseDto {
     private String content;
     private String category;
     private LocalDateTime createdAt;
-    //private Long memberId; // 작성자 ID
+    private Long memberId; // 작성자 ID
 
     // 엔티티 -> DTO 변환
     public PostResponseDto(Post post) {
@@ -21,6 +21,6 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.category = post.getCategory().name();
         this.createdAt = post.getCreatedAt();
-        //this.memberId = post.getMember().getId();
+//        this.memberId = post.getMember().getId();
     }
 }

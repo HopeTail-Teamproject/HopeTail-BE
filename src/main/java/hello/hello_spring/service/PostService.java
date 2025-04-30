@@ -1,8 +1,9 @@
 package hello.hello_spring.service;
 
-import hello.hello_spring.dto.*;
-import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.Post;
+import hello.hello_spring.dto.post.PostCreateRequestDto;
+import hello.hello_spring.dto.post.PostResponseDto;
+import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +21,11 @@ public class PostService {
 
     // 게시글 생성
     public PostResponseDto createPost(PostCreateRequestDto dto) {
-        // 1. 작성자(Member) 조회
-//        Member member = memberRepository.findById(dto.getMemberId())
-//                .orElseThrow(() -> new RuntimeException("Member not found"));
 
         // 2. 엔티티 생성
         Post post = new Post();
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
-        //post.setMember(member);
         post.setCategory(Post.Category.valueOf(dto.getCategory().toUpperCase()));
 
         // 3. 저장

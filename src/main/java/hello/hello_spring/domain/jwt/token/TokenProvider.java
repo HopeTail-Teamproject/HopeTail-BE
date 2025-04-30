@@ -27,6 +27,7 @@ public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String USERNAME_KEY = "username";
     private static final String TOKEN_ID_KEY = "tokenId";
+    private static final String TOKEN_TYPE = "tokenType";
     private final Key hashKey;
     private final long TokenValidationInMilliseconds;
     private final AccessTokenBlackList accessTokenBlackList;
@@ -38,11 +39,10 @@ public class TokenProvider {
         this.accessTokenBlackList = accessTokenBlackList;
     }
 
-    public TokenDto createToken(Member member) {
+    public TokenDto createAccessToken(Member member) {
         long currentTime = (new Date()).getTime();
 
         Date accessTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds);
-        Date refreshTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds * 24 * 10);
         String tokenId = UUID.randomUUID().toString();
 
 
@@ -52,41 +52,11 @@ public class TokenProvider {
                 .claim(AUTHORITIES_KEY, member.getRole())
                 .claim(USERNAME_KEY, member.getUsername())
                 .claim(TOKEN_ID_KEY, tokenId)
+                .claim(TOKEN_TYPE, TokenType.ACCESS)
                 .signWith(hashKey, SignatureAlgorithm.HS512)
                 .setExpiration(accessTokenExpireTime)
                 .compact();
 
-        // Refresh 토큰
-        String refreshToken = Jwts.builder()
-                .setSubject(member.getEmail())
-                .claim(AUTHORITIES_KEY, member.getRole())
-                .claim(USERNAME_KEY, member.getUsername())
-                .claim(TOKEN_ID_KEY, tokenId)
-                .signWith(hashKey, SignatureAlgorithm.HS512)
-                .setExpiration(refreshTokenExpireTime)
-                .compact();
-
-        // Certification 토큰
-
-//        String certificationToken = Jwts.builder()
-//                .setSubject(member.getEmail())
-//                .claim(AUTHORITIES_KEY, member.getRole())
-//                .claim(USERNAME_KEY, member.getUsername())
-//                .claim(TOKEN_ID_KEY, tokenId)
-//                .signWith(hashKey, SignatureAlgorithm.HS512)
-//                .setExpiration(TokenExpireTime)
-//                .compact();
-
-        // PasswordReset 토큰
-
-//        String passwordResetToken = Jwts.builder()
-//                .setSubject(member.getEmail())
-//                .claim(AUTHORITIES_KEY, member.getRole())
-//                .claim(USERNAME_KEY, member.getUsername())
-//                .claim(TOKEN_ID_KEY, tokenId)
-//                .signWith(hashKey, SignatureAlgorithm.HS512)
-//                .setExpiration(TokenExpireTime)
-//                .compact();
 
 
         return TokenDto.builder()
@@ -98,9 +68,36 @@ public class TokenProvider {
 
     }
 
+    public TokenDto createRefreshToken(Member member) {
+        long currentTime = (new Date()).getTime();
+
+        Date refreshTokenExpireTime = new Date(currentTime + this.TokenValidationInMilliseconds * 24 * 10);
+        String tokenId = UUID.randomUUID().toString();
+
+        // Refresh 토큰
+        String refreshToken = Jwts.builder()
+                .setSubject(member.getEmail())
+                .claim(AUTHORITIES_KEY, member.getRole())
+                .claim(USERNAME_KEY, member.getUsername())
+                .claim(TOKEN_ID_KEY, tokenId)
+                .claim(TOKEN_TYPE, TokenType.REFRESH)
+                .signWith(hashKey, SignatureAlgorithm.HS512)
+                .setExpiration(refreshTokenExpireTime)
+                .compact();
+
+        return TokenDto.builder()
+                .email(member.getEmail())
+                .Token(refreshToken)
+                .tokenId(tokenId)
+                .tokenExpiredAt(refreshTokenExpireTime)
+                .build();
+
+    }
+
+
     public TokenValidationResult validateToken(String token) {
         try {
-            Claims claims = Jwts.parser().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
+            Claims claims = Jwts.parserBuilder().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
             return new TokenValidationResult(TokenStatus.TOKEN_VALID,
                     claims.get(TOKEN_ID_KEY, String.class),
                     TokenType.ACCESS,
@@ -149,4 +146,10 @@ public class TokenProvider {
         }
         return false;
     }
+
+    public Claims getClaims(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(hashKey).build().parseClaimsJws(token).getBody();
+        return claims;
+    }
+
 }
