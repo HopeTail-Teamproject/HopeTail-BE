@@ -35,9 +35,10 @@ public class PetService {
 //        return new PetResponseDto(saved);
 //    }
 
-    public PetResponseDto createPet(PetCreateRequestDto dto) {
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new RuntimeException("등록자(member)를 찾을 수 없습니다."));
+    public PetResponseDto createPet(PetCreateRequestDto dto, Member member) {
+        // 여기 추가
+        Member findMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new RuntimeException("인증된 회원을 찾을 수 없습니다."));
 
         Pet pet = new Pet();
         pet.setName(dto.getName());
@@ -47,11 +48,14 @@ public class PetService {
         pet.setDescription(dto.getDescription());
         pet.setImage(dto.getImage());
         pet.setStatus(Pet.Status.WAITING);
-        pet.setMember(member); // ✅ 등록자 설정
+        pet.setMember(findMember); // ★★★ 진짜 JPA 영속성 엔티티 연결
 
         Pet saved = petRepository.save(pet);
         return new PetResponseDto(saved);
     }
+
+
+
 
     public List<PetResponseDto> getAllPets() {
         return petRepository.findByStatus(Pet.Status.WAITING)
