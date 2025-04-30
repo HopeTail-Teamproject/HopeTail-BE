@@ -1,5 +1,6 @@
 package hello.hello_spring.dto.token;
 
+import hello.hello_spring.domain.jwt.token.TokenType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,7 +16,7 @@ public class TokenDto {
     private String email;
 
     @Builder
-    public TokenDto(String tokenId, String Token, Date tokenExpiredAt, String email){
+    public TokenDto(String tokenId, String Token, Date tokenExpiredAt, String email, TokenType tokenType) {
         this.tokenId = tokenId;
         this.Token = Token;
         this.tokenExpiredAt = tokenExpiredAt;
