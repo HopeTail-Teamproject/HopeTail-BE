@@ -19,10 +19,6 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    // 작성자
-//    @ManyToOne
-//    @JoinColumn(name = "member_id", nullable = false)
-//    private Member member;
 
     @Column
     private String email;
@@ -41,6 +37,10 @@ public class Post {
     // 댓글 리스트
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     public enum Category {
         REVIEW, DIARY

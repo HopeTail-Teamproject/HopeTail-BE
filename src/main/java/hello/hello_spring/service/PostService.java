@@ -1,11 +1,14 @@
 package hello.hello_spring.service;
 
 import hello.hello_spring.domain.Post;
+import hello.hello_spring.domain.PostLike;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
+import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.dto.post.PostCreateRequestDto;
 import hello.hello_spring.dto.post.PostResponseDto;
 import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.repository.MemberRepository;
+import hello.hello_spring.repository.PostLikeRepository;
 import hello.hello_spring.repository.PostRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +25,9 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
+    private final PostLikeRepository postLikeRepository;
+    private final MemberRepository memberRepository;
 
     // 게시글 생성
     public PostResponseDto createPost(PostCreateRequestDto dto, HttpServletRequest request) {
@@ -36,11 +40,16 @@ public class PostService {
         Claims claims = tokenProvider.getClaims(token);
         String email = claims.getSubject();
 
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("해당하는 유저가 없습니다.")
+        );
+
         // 2. 엔티티 생성
         Post post = new Post();
         post.setEmail(email);
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
+        post.setMember(member);
         post.setCategory(Post.Category.valueOf(dto.getCategory().toUpperCase()));
 
         // 3. 저장
@@ -122,5 +131,35 @@ public class PostService {
     public List<PostResponseDto> getPostsByCategory(String category) {
         List<Post> posts = postRepository.findByCategory(Post.Category.valueOf(category.toUpperCase()));
         return posts.stream().map(PostResponseDto::new).collect(Collectors.toList());
+    }
+
+    public void handlePostLikeButton(Long postId, HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = "";
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            token = bearerToken.substring(7);
+        }
+        Claims claims = tokenProvider.getClaims(token);
+        String email = claims.getSubject();
+
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RuntimeException("삭제된 게시물입니다."));
+
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+        PostLike postLike = postLikeRepository.findByPostIdAndEmail(postId, email);
+
+        if (postLike == null) {
+            postLike = new PostLike();
+            postLike.setPost(post);
+            postLike.setEmail(email);
+            postLike.setMember(member);
+            postLikeRepository.save(postLike);
+        }
+        else {
+            postLikeRepository.delete(postLike);
+        }
+
     }
 }

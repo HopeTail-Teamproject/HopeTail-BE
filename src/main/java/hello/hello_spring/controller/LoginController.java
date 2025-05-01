@@ -10,6 +10,7 @@ import hello.hello_spring.dto.member.MemberLoginDto;
 import hello.hello_spring.dto.token.TokenDto;
 import hello.hello_spring.service.LoginService;
 import hello.hello_spring.web.json.ApiResponseJson;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,6 +30,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
+    @Operation(summary = "회원가입")
     @PostMapping("/api/account/create")
     public ApiResponseJson createNewAccount(@Valid @RequestBody MemberCreateDto memberCreateDto,
                                             BindingResult bindingResult) {
@@ -46,7 +48,7 @@ public class LoginController {
         ));
 
     }
-
+    @Operation(summary = "로그인")
     @PostMapping("/api/account/auth")
     public ApiResponseJson authenticateAccountAndIssueToken(@Valid @RequestBody MemberLoginDto memberLoginDto,
                                                             HttpServletResponse response,
@@ -66,6 +68,7 @@ public class LoginController {
         return new ApiResponseJson(HttpStatus.OK, loginResponseDto);
     }
 
+    @Operation(summary = "유저 정보 조회")
     @GetMapping("/api/account/userinfo")
     public ApiResponseJson getUserInfo(@AuthenticationPrincipal MemberPrinciple memberPrinciple) {
         log.info("요청 이메일 : {}", memberPrinciple.getEmail());
@@ -76,6 +79,7 @@ public class LoginController {
         return new ApiResponseJson(HttpStatus.OK, userinfo);
     }
 
+    @Operation(summary = "로그아웃")
     @PostMapping("/api/account/logout")
     public ApiResponseJson logoutUser(@AuthenticationPrincipal MemberPrinciple memberPrinciple,
                                       @RequestHeader("Authorization") String authHeader,
@@ -89,6 +93,7 @@ public class LoginController {
     }
 
     // 토큰 재발급 api
+    @Operation(summary = "토큰 재발급 요청")
     @PostMapping("/api/account/auth/refresh")
     public ApiResponseJson reissueToken(HttpServletRequest request) {
         String refreshToken = loginService.extractRefreshToken(request);

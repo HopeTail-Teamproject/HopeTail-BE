@@ -4,10 +4,12 @@ import hello.hello_spring.dto.post.PostCreateRequestDto;
 import hello.hello_spring.dto.post.PostResponseDto;
 import hello.hello_spring.dto.post.PostUpdateRequestDto;
 import hello.hello_spring.service.PostService;
+import hello.hello_spring.web.json.ApiResponseJson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,5 +58,13 @@ public class PostController {
     @GetMapping("/category")
     public List<PostResponseDto> getPostsByCategory(@RequestParam String category) {
         return postService.getPostsByCategory(category);
+    }
+
+    @Operation(summary = "좋아요 버튼 클릭")
+    @PostMapping("/{postId}/like")
+    public ApiResponseJson clickLikeButton(@PathVariable Long postId,
+                                           HttpServletRequest request) {
+        postService.handlePostLikeButton(postId, request);
+        return new ApiResponseJson(HttpStatus.OK, null);
     }
 }

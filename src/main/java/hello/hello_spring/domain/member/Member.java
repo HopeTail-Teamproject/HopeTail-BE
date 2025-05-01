@@ -38,10 +38,10 @@ public class Member {
     private String phoneNumber;
 
     @CreationTimestamp
-    private LocalDateTime createdat;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedat;
+    private LocalDateTime updatedAt;
 
     @Column
     private String address;
@@ -53,11 +53,11 @@ public class Member {
     @Column
     private LocalDateTime lastLogin;
 
-    @ColumnDefault("0")
-    private boolean emailCertified;
-
-    @ColumnDefault("0")
-    private boolean phoneCertified;
+//    @ColumnDefault("0")
+//    private boolean emailCertified;
+//
+//    @ColumnDefault("0")
+//    private boolean phoneCertified;
 
     private String profileImage; // nullable
 
@@ -65,9 +65,9 @@ public class Member {
     @Column(nullable = false)
     private Role role = Role.USER;
 
-//    // 관계 매핑
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Post> posts;
+    // 관계 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
@@ -94,8 +94,8 @@ public class Member {
     }
 }
 
-enum Status {
-    ACTIVE,
-    INACTIVE,
-    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
-}
+//enum Status {
+//    ACTIVE,
+//    INACTIVE,
+//    PENDING                  // 인증 받기 전 PENDING 으로 대기 상태 유지
+//}
