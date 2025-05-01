@@ -72,11 +72,11 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Adoption> adoptions;
+    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Adoption> adoptions;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PetRegistration> petRegistrations;
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<PetRegistration> petRegistrations;
 
     // 사용자 권한 enum
     public enum Role {
