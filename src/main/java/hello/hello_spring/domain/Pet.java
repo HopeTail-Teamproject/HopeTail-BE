@@ -40,9 +40,6 @@ public class Pet {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Adoption> adoptions;
-
     public enum Gender {
         MALE, FEMALE
     }
