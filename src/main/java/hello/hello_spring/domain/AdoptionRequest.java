@@ -1,6 +1,7 @@
 package hello.hello_spring.domain;
 
 import hello.hello_spring.domain.member.Member;
+import hello.hello_spring.domain.petPost.PetPost;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class AdoptionRequest {
     // 대상 유기견
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private Pet pet;
+    private PetPost pet;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.IN_PROGRESS;
