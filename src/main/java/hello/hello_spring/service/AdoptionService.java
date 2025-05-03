@@ -116,7 +116,8 @@ public class AdoptionService {
             List<AdoptionRequestDetailResponse.AnswerItem> answers =
                     adoptionAnswerRepository.findByAdoptionRequest(req).stream()
                             .map(ans -> new AdoptionRequestDetailResponse.AnswerItem(
-                                    ans.getQuestionType(), ans.getAnswer()))
+                                    ans.getQuestionType().getQuestion(),  // <- 여기 수정
+                                    ans.getAnswer()))
                             .toList();
 
             return AdoptionRequestDetailResponse.builder()
@@ -129,4 +130,7 @@ public class AdoptionService {
 
         }).toList();
     }
+
+
+
 }
