@@ -1,11 +1,13 @@
 package hello.hello_spring.domain.petPost;
 
+import hello.hello_spring.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,6 +35,13 @@ public class PetPost {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.PROTECTING;
+
+    @OneToMany(mappedBy = "petPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PetPostLike> petPostLikes;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = true)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     public enum Status {
         PROTECTING, ADOPTED

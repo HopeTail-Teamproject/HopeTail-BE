@@ -1,9 +1,15 @@
 package hello.hello_spring.service;
 
+import hello.hello_spring.domain.Post;
+import hello.hello_spring.domain.PostLike;
 import hello.hello_spring.domain.jwt.token.TokenProvider;
+import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.domain.petPost.PetPost;
+import hello.hello_spring.domain.petPost.PetPostLike;
 import hello.hello_spring.dto.pet.PetPostCreateRequestDto;
 import hello.hello_spring.dto.pet.PetPostResponseDto;
+import hello.hello_spring.repository.MemberRepository;
+import hello.hello_spring.repository.PetPostLikeRepository;
 import hello.hello_spring.repository.PetPostRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +26,8 @@ public class PetPostService {
 
     private final PetPostRepository repo;
     private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
+    private final PetPostLikeRepository petPostLikeRepository;
 
     public PetPostResponseDto createPet(PetPostCreateRequestDto dto, HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -76,4 +84,35 @@ public class PetPostService {
 
         repo.deleteById(petId);
     }
+
+    public void handlePetPostLikeButton(Long petId, HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        String token = "";
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            token = bearerToken.substring(7);
+        }
+        Claims claims = tokenProvider.getClaims(token);
+        String email = claims.getSubject();
+
+        PetPost petPost = repo.findById(petId).orElseThrow(
+                () -> new RuntimeException("삭제된 펫입니다."));
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+
+        PetPostLike petPostLike = petPostLikeRepository.findByPetPostIdAndEmail(petId, email);
+
+        if (petPostLike == null) {
+            petPostLike = new PetPostLike();
+            petPostLike.setPetPost(petPost);
+            petPostLike.setEmail(email);
+            petPostLike.setMember(member);
+            petPostLikeRepository.save(petPostLike);
+        }
+        else {
+            petPostLikeRepository.delete(petPostLike);
+        }
+
+    }
 }
+
