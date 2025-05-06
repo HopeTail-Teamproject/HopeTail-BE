@@ -15,7 +15,7 @@ java {
 }
 
 application {
-	mainClassName = 'org.example.App'
+	mainClassName = 'hello.hello_spring.HelloSpringApplication'
 }
 
 repositories {
