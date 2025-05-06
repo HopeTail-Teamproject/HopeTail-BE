@@ -1,5 +1,6 @@
 package hello.hello_spring.domain.jwt.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,6 +20,12 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.port}")
     private int port;
+
+    @PostConstruct
+    public void checkProps() {
+        System.out.println("🔥 Redis Host: " + host);
+        System.out.println("🔥 Redis Port: " + port);
+    }
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
