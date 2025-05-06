@@ -1,6 +1,7 @@
 package hello.hello_spring.domain.jwt.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -17,16 +18,12 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("${spring.data.redis.password:}")
-    private String redisPassword;
-
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         // 0 ~ 15 중 DB 선택 가능 기본 0
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
-        redisStandaloneConfiguration.setPassword(redisPassword);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
