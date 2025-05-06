@@ -20,7 +20,7 @@ public class AccessTokenBlackList {
 
     public void setBlackList(String key, Object o) {
         redisBlackListTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
-        redisBlackListTemplate.opsForValue().set(key, o, accessTokenTimeoutInSeconds * 1000, TimeUnit.MILLISECONDS);
+        redisBlackListTemplate.opsForValue().set(key, o, accessTokenTimeoutInSeconds, TimeUnit.SECONDS);
     }
 
     public Object getBlackList(String key) {
