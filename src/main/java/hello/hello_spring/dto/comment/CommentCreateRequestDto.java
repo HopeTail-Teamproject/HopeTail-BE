@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class CommentCreateRequestDto {
-    @Schema(description = "댓글 내용")
+    @Schema(description = "댓글 내용", example = "댓글내용")
     private String content;
 //    @Schema(description = "작성자 memberId (임시)")
 //    private Long postId;
