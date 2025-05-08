@@ -8,6 +8,7 @@ import hello.hello_spring.domain.member.Member;
 import hello.hello_spring.repository.ChatMessageRepository;
 import hello.hello_spring.repository.ChatRoomRepository;
 import hello.hello_spring.repository.MemberRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,11 @@ public class PrivateChatController {
         this.chatMessageRepository = chatMessageRepository;
     }
 
+    @Operation(
+            summary = "개인 채팅 메시지 전송",
+            description = "지정된 채팅방에 개인 메시지를 전송합니다. 메시지는 데이터베이스에 저장되며, 이후 WebSocket을 통해 실시간으로 수신자에게 전달됩니다.",
+            tags = {"Private Chat", "Messaging"}
+    )
     @MessageMapping("/chat/private")
     public void handlePrivateMessage(PrivateChatMessageDto dto) {
         Long chatRoomId = dto.getChatRoomId();
