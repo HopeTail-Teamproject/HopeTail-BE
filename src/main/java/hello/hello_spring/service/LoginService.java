@@ -15,6 +15,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,8 @@ import java.util.regex.Pattern;
 @Transactional
 @RequiredArgsConstructor
 public class LoginService {
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
     private static final String PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@!%*#?&])[A-Za-z\\d$@!%*#?&]{8,}$";
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
     private final MemberRepository memberRepository;
@@ -43,6 +46,7 @@ public class LoginService {
     private final AccessTokenBlackList accessTokenBlackList;
 
     public Member createMember(MemberCreateDto memberCreateDto) {
+        checkEmailForm(memberCreateDto.getEmail());
         checkPasswordLength(memberCreateDto.getPassword());
         
         if (memberRepository.existsByEmail(memberCreateDto.getEmail())) {
@@ -60,6 +64,15 @@ public class LoginService {
                 build();
 
         return memberRepository.save(member);
+    }
+
+    private void checkEmailForm(@NotNull String email) {
+        if (EMAIL_PATTERN.matcher(email).matches()) {
+            return;
+        }
+
+        log.info("이메일 정책 미달");
+        throw new IllegalArgumentException("이메일 형식에 맞지 않습니다.");
     }
 
     private void checkPasswordLength(@NotNull String password) {

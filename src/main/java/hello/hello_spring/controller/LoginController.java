@@ -82,11 +82,10 @@ public class LoginController {
     @Operation(summary = "로그아웃")
     @PostMapping("/api/account/logout")
     public ApiResponseJson logoutUser(@AuthenticationPrincipal MemberPrinciple memberPrinciple,
-                                      @RequestHeader("Authorization") String authHeader,
                                       HttpServletResponse response) {
         log.info("로그아웃 요청 이메일 : {}", memberPrinciple.getEmail());
         RefreshToken refreshToken = loginService.findRefreshToken(memberPrinciple.getEmail());
-        loginService.logout(authHeader.substring(7), memberPrinciple.getEmail(),
+        loginService.logout(memberPrinciple.getAccessToken(), memberPrinciple.getEmail(),
                 refreshToken, response);
 
         return new ApiResponseJson(HttpStatus.OK, "OK. BYE~~");

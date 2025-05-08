@@ -125,6 +125,7 @@ public class TokenProvider {
                         .collect(Collectors.toList());
 
         MemberPrinciple principle = new MemberPrinciple(claims.get(USERNAME_KEY, String.class), claims.getSubject(),
+                token,
                 authorities);
 
         return new UsernamePasswordAuthenticationToken(principle, token, authorities);
