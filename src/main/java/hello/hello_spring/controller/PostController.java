@@ -69,16 +69,16 @@ public class PostController {
     }
 
     @Operation(summary = "이메일로 게시글 찾기")
-    @GetMapping("/{postEmail}")
+    @GetMapping("/posts/by-email")
     public List<PostResponseDto> getPostsByEmail(@RequestParam String email){
         return postService.getPostsByEmail(email);
     }
 
-    @Operation(summary = "로그인한 유저 게시글 찾기")
-    @GetMapping("/{memebersPosts}")
-    public List<PostResponseDto> getPostsByLoginEmail(@RequestParam HttpServletRequest request){
-        return postService.getPostsByLoginEmail(request);
-    }
+//    @Operation(summary = "로그인한 유저 게시글 찾기")
+//    @GetMapping("/posts/by-login")
+//    public List<PostResponseDto> getPostsByLoginEmail(@RequestParam HttpServletRequest request){
+//        return postService.getPostsByLoginEmail(request);
+//    }
 }
 
 
