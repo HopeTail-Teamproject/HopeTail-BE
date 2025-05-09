@@ -7,7 +7,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080", "https://hopetail-teamproject.github.io")
+                .allowedOrigins("http://localhost:8080", "https://hopetail-teamproject.github.io",
+                        "https://api.hopetail.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
     }
