@@ -74,6 +74,32 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+    //로그인한 유저 이메일 기반 게시글 조회
+    //ex 내가 쓴 게시물
+    public List<PostResponseDto> getPostsByLoginEmail(HttpServletRequest request){
+        // 1. 토큰에서 이메일 추출
+        String bearerToken = request.getHeader("Authorization");
+        String token = "";
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            token = bearerToken.substring(7);
+        }
+        Claims claims = tokenProvider.getClaims(token);
+        String emailFromToken = claims.getSubject();
+
+        return postRepository.findByEmail(emailFromToken)
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    //이메일로 게시글 찾기
+    public List<PostResponseDto> getPostsByEmail(String email){
+        return postRepository.findByEmail(email)
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, HttpServletRequest request) {
         // 1. 토큰에서 이메일 추출
         String bearerToken = request.getHeader("Authorization");
