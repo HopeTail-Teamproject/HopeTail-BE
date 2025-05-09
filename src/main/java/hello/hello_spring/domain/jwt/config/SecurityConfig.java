@@ -42,6 +42,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure() // ✅ HTTPS 강제 설정
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -65,6 +68,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 )
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

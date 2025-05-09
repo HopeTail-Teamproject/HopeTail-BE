@@ -1,12 +1,15 @@
 package hello.hello_spring;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server URL")}) // 추가
 public class HelloSpringApplication {
 
 	public static void main(String[] args) {
