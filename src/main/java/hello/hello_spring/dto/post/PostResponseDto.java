@@ -17,7 +17,7 @@ public class PostResponseDto {
     @Schema(description = "게시글 내용", example = "오늘 아이가 처음으로 사료를 잘 먹었어요!")
     private String content;
 
-    @Schema(description = "카테고리", example = "DIARY")
+    @Schema(description = "카테고리", example = "DIARY or REVIEW")
     private String category;
 
     @Schema(description = "생성 일시", example = "2025-05-02T15:20:30")

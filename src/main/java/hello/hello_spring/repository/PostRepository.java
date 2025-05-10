@@ -10,6 +10,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //카테고리로 조회
     List<Post> findByCategory(Post.Category category);
 
+    List<Post> findByEmail(String email);
+
     //Spring Data JPA 때문에
     //save, findAll, deleteById 자동 생성
 }
