@@ -11,7 +11,7 @@ spring:
         format_sql: true
     database: mysql
   datasource:
-    url: jdbc:mysql://localhost:3306/hopetail-db?autoReconnect=true
+    url: jdbc:mysql://localhost:3306/hopetailLocalDB?autoReconnect=true
     username: kyoohyun
     password: 3993
 
