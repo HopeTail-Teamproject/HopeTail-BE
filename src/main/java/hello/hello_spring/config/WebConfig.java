@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/*")
                 .allowedOrigins(
-                        "http://localhost:8080/",               // 로컬 테스트
+                        "http://localhost:8080/",   // 로컬 테스트
                         "https://hopetail-teamproject.github.io/",  // GitHub Pages
                         "https://api.hopetail.com/"             // API 서버 주소 (HTTPS)
                 )

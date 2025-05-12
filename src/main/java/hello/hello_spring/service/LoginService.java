@@ -48,11 +48,13 @@ public class LoginService {
     public Member createMember(MemberCreateDto memberCreateDto) {
         checkEmailForm(memberCreateDto.getEmail());
         checkPasswordLength(memberCreateDto.getPassword());
-        
+
+        // 추후에 핸드폰 번호 형식검사 필요 || unique한지도
         if (memberRepository.existsByEmail(memberCreateDto.getEmail())) {
             log.info("이미 등록된 이메일 {}", memberCreateDto.getEmail());
             throw new IllegalArgumentException("이미 등록된 이메일입니다.");
         }
+
 
         Member member = Member.builder().
                 address(memberCreateDto.getAddress()).
@@ -65,6 +67,7 @@ public class LoginService {
 
         return memberRepository.save(member);
     }
+
 
     private void checkEmailForm(@NotNull String email) {
         if (EMAIL_PATTERN.matcher(email).matches()) {
