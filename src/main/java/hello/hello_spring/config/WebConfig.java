@@ -11,8 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:8080",   // 로컬 테스트
-                        "https://hopetail-teamproject.github.io/",  // GitHub Pages
-                        "https://api.hopetail.com/"             // API 서버 주소 (HTTPS)
+                        "https://hopetail-teamproject.github.io",  // GitHub Pages
+                        "https://api.hopetail.com"             // API 서버 주소 (HTTPS)
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")                         // 모든 헤더 허용
