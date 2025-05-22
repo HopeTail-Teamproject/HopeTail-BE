@@ -44,9 +44,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .cors(Customizer.withDefaults())
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure() // ✅ HTTPS 강제 설정
-                )  // 로컬에서 작업할때는 주석 처리!
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
