@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -28,6 +30,7 @@ public class AdoptionService {
     private final AdoptionAnswerRepository adoptionAnswerRepository;
     private final HomeImageRepository homeImageRepository;
     private final TokenProvider tokenProvider;
+    private final ImageService imageService;
 
     private String extractEmail(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -122,5 +125,24 @@ public class AdoptionService {
                     .answers(answers)
                     .build();
         }).toList();
+    }
+
+    @Transactional
+    public void saveHomeImages(Long requestId, List<MultipartFile> imageFiles) {
+        AdoptionRequest request = adoptionRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("입양 신청이 존재하지 않습니다."));
+
+        for (MultipartFile image : imageFiles) {
+            try {
+                String imageUrl = imageService.saveImageGetUrl(image);
+                HomeImage homeImage = HomeImage.builder()
+                        .adoptionRequest(request)
+                        .imageUrl(imageUrl)
+                        .build();
+                homeImageRepository.save(homeImage);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 저장 중 오류 발생", e);
+            }
+        }
     }
 }
