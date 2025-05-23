@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,15 +30,13 @@ public class AdoptionController {
         return ResponseEntity.ok(requestId);
     }
 
-    @Operation(summary = "집 사진 저장", description = "입양 신청 과정에서 집 사진을 업로드합니다. 신청 id를 입력하고 이미지 주소를 입력합니다.")
-    @PostMapping("/{id}/images")
+    @Operation(summary = "집 사진 저장", description = "입양 신청 과정에서 집 사진 파일을 업로드합니다. 신청 ID를 입력하고 이미지 파일들을 전송합니다.")
+    @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
     public ResponseEntity<Void> uploadImages(
             @PathVariable("id") Long requestId,
-            @RequestBody List<String> imageUrls
+            @RequestParam("images") List<MultipartFile> imageFiles
     ) {
-        AdoptionRequest request = new AdoptionRequest();
-        request.setId(requestId); // 간단한 방식으로 참조
-        adoptionService.saveHomeImages(request, imageUrls);
+        adoptionService.saveHomeImages(requestId, imageFiles);
         return ResponseEntity.ok().build();
     }
 
