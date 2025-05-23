@@ -25,7 +25,7 @@ public class ImageService {
         Path savedPath = imageDir.resolve(savedFileName);
         image.transferTo(savedPath.toFile()); //실제 이미지 파일 저장
 
-        return "/image/" + savedFileName; //저장한 이미지 조회할 수 있는 url WebConfig에서 매핑해줌
+        return "/images/" + savedFileName; //저장한 이미지 조회할 수 있는 url WebConfig에서 매핑해줌
     }
 
     //getExtension 메소드
