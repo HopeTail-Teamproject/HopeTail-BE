@@ -12,6 +12,7 @@ import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.PetPostLikeRepository;
 import hello.hello_spring.repository.PetPostRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -29,7 +30,8 @@ public class PetPostService {
     private final MemberRepository memberRepository;
     private final PetPostLikeRepository petPostLikeRepository;
 
-    public PetPostResponseDto createPet(PetPostCreateRequestDto dto, HttpServletRequest request) {
+    @Transactional
+    public void createPet(PetPostCreateRequestDto dto, String imageUrl ,HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         String token = "";
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -40,7 +42,7 @@ public class PetPostService {
 
         // 3) 엔티티 생성 & email 세팅
         PetPost post = new PetPost();
-        post.setPhotoUrl(dto.getPhotoUrl());
+        post.setPhotoUrl(imageUrl);
         post.setName(dto.getName());
         post.setAge(dto.getAge());
         post.setSpecies(dto.getSpecies());
@@ -49,8 +51,7 @@ public class PetPostService {
         post.setEmail(email);                    // ← 여기서 이메일로 식별
 
         // 4) 저장
-        PetPost saved = repo.save(post);
-        return new PetPostResponseDto(saved);
+        repo.save(post);
     }
 
     public List<PetPostResponseDto> getAllPets() {

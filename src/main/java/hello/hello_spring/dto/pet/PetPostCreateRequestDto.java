@@ -9,9 +9,6 @@ import lombok.Setter;
 public class PetPostCreateRequestDto {
 
 
-    @Schema(description = "강아지 사진 URL", example = "https://example.com/images/dog.jpg")
-    private String photoUrl;
-
     @Schema(description = "강아지 이름", example = "골드")
     private String name;
 
