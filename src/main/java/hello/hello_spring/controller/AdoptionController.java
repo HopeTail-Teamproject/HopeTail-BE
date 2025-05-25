@@ -52,6 +52,13 @@ public class AdoptionController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "입양 신청 이미지 조회", description = "특정 입양 신청과 연결된 집 사진들을 조회합니다.")
+    @GetMapping("/{id}/images")
+    public ResponseEntity<List<String>> getHomeImages(@PathVariable("id") Long requestId) {
+        List<String> imageUrls = adoptionService.getHomeImageUrls(requestId);
+        return ResponseEntity.ok(imageUrls);
+    }
+
     @Operation(
             summary = "입양 신청 최종 제출",
             description = "모든 정보를 입력한 후, 입양 신청을 최종 제출합니다. " +

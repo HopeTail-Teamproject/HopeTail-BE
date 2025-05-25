@@ -145,4 +145,14 @@ public class AdoptionService {
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    public List<String> getHomeImageUrls(Long requestId) {
+        AdoptionRequest request = adoptionRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("입양 신청이 존재하지 않습니다."));
+
+        return homeImageRepository.findByAdoptionRequest(request).stream()
+                .map(HomeImage::getImageUrl)
+                .toList();
+    }
 }
