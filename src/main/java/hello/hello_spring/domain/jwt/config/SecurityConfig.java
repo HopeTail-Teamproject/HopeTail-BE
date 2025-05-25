@@ -3,6 +3,7 @@ package hello.hello_spring.domain.jwt.config;
 import hello.hello_spring.domain.jwt.JwtAccessDeniedHandler;
 import hello.hello_spring.domain.jwt.JwtAuthenticationEntryPoint;
 import hello.hello_spring.domain.jwt.JwtFilter;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/api/account/auth",
             "/ws-stomp/**",         // ✅ WebSocket 연결 허용 추가
             "/chat-test.html",      // ✅ 테스트용 HTML 페이지도 허용
-            "/js/**"                // ✅ JS 파일도 허용 (stomp.js, sockjs.js 등)
+            "/js/**",                // ✅ JS 파일도 허용 (stomp.js, sockjs.js 등)
+            "/health"               //상태검사용
     };
     private final String[] anonymousUrl = {"/api/account/create"};
 
@@ -73,6 +75,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }
 
