@@ -1,166 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Topic-Based Chat (Single Page for A & B)</title>
-  <script src="/js/sockjs.min.js"></script>
-  <script src="/js/stomp.umd.js"></script>
+  <meta charset="UTF-8">
+  <title>WebSocket Chat Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 </head>
 <body>
-<h1>Topic Chat Test on a Single Page</h1>
+<h2>WebSocket 채팅 테스트</h2>
 
-<!-- =============== USER A SECTION =============== -->
-<div style="border:1px solid #ccc; padding:10px; margin:10px;">
-  <h2>User A</h2>
-  <div>
-    <label>ChatRoom ID: <input type="text" id="roomA" value="2"></label><br/>
-    <label>Sender ID: <input type="text" id="senderA" value="1"></label><br/>
-    <label>Receiver ID (optional): <input type="text" id="receiverA" value="2"></label><br/>
-    <button onclick="connectA()">Connect A</button>
-    <button onclick="disconnectA()">Disconnect A</button>
-  </div>
-  <hr/>
-  <div>
-    <input type="text" id="msgA" placeholder="A's Message">
-    <button onclick="sendA()">Send as A</button>
-  </div>
-  <div id="logA" style="background:#f9f9f9; min-height:80px; margin-top:10px; padding:5px;">
-    <strong>Logs (A):</strong><br/>
-  </div>
-</div>
+<label>JWT AccessToken: <input type="text" id="token" size="100"></label><br><br>
+<label>ChatRoom ID: <input type="number" id="chatRoomId" value="1"></label><br>
+<label>Receiver ID: <input type="number" id="receiverId" value="2"></label><br>
+<label>Message: <input type="text" id="message" value="안녕하세요!"></label><br><br>
 
-<!-- =============== USER B SECTION =============== -->
-<div style="border:1px solid #ccc; padding:10px; margin:10px;">
-  <h2>User B</h2>
-  <div>
-    <label>ChatRoom ID: <input type="text" id="roomB" value="2"></label><br/>
-    <label>Sender ID: <input type="text" id="senderB" value="2"></label><br/>
-    <label>Receiver ID (optional): <input type="text" id="receiverB" value="1"></label><br/>
-    <button onclick="connectB()">Connect B</button>
-    <button onclick="disconnectB()">Disconnect B</button>
-  </div>
-  <hr/>
-  <div>
-    <input type="text" id="msgB" placeholder="B's Message">
-    <button onclick="sendB()">Send as B</button>
-  </div>
-  <div id="logB" style="background:#f9f9f9; min-height:80px; margin-top:10px; padding:5px;">
-    <strong>Logs (B):</strong><br/>
-  </div>
-</div>
+<button onclick="connect()">Connect</button>
+<button onclick="sendMessage()">Send Message</button>
+
+<pre id="log" style="background: #f0f0f0; padding: 10px; height: 200px; overflow-y: scroll;"></pre>
 
 <script>
-  // stompClients
-  let stompClientA = null;
-  let stompClientB = null;
+  let stompClient = null;
 
-  // ---------------------- USER A ----------------------
-  function connectA() {
-    const tokenA = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaG9jb21pbjAyMTFAaGFueWFuZy5hYy5rciIsImF1dGgiOiJVU0VSIiwidXNlcm5hbWUiOiJtaW5zdW5nIiwidG9rZW5JZCI6IjFiY2NkYWI2LWU0MDEtNDJjYS04ZTI5LWEzNDFhNjk2YWFjMCIsImV4cCI6MTc0NDEzNzQ0Nn0.8yta7dB5qqGgTwwyvGWBio4hwwdTeSx2w97y6msYE82YrcYHNoM7F4u2P9zAd5hF5SdCP3iTWWG03ciktHYsZw"; // 실제 토큰 입력
-    const socketA = new SockJS('/ws-stomp?token=Bearer ' + tokenA);  // 토큰을 쿼리 파라미터로 전달
-    stompClientA = StompJs.Stomp.over(socketA);
-
-    stompClientA.connect({}, function(frame) {
-      logA("Connected A: " + frame);
-
-      // A가 "/topic/chatroom/{roomId}"를 구독
-      const roomId = document.getElementById("roomA").value;
-      stompClientA.subscribe("/topic/chatroom/" + roomId, function(message) {
-        const msgObj = JSON.parse(message.body);
-        logA("Received >> from: " + msgObj.senderUsername + " - " + msgObj.content);
-      });
-    });
+  function log(msg) {
+    const logBox = document.getElementById("log");
+    logBox.textContent += msg + "\n";
+    logBox.scrollTop = logBox.scrollHeight;
   }
 
-  function disconnectA() {
-    if (stompClientA !== null) {
-      stompClientA.disconnect();
-      stompClientA = null;
-    }
-    logA("Disconnected A");
+  function connect() {
+    const token  = document.getElementById("token").value;
+    const socket = new SockJS("/ws/chat?token=" + token);
+    stompClient  = Stomp.over(socket);
+
+    stompClient.connect(
+            {
+              Authorization: "Bearer " + token,
+              host: window.location.host          // ✅ 추가
+            },
+            frame => {
+              log("✅ STOMP CONNECTED: " + frame);
+              const id = document.getElementById("chatRoomId").value;
+              stompClient.subscribe("/sub/chatroom/" + id,
+                      msg => log("📩 " + msg.body));
+            },
+            err => log("❌ STOMP 실패 : " + err)
+    );
   }
 
-  function sendA() {
-    if (!stompClientA) {
-      alert("User A is not connected!");
+  function sendMessage() {
+    if (!stompClient || !stompClient.connected) {
+      log("⚠️ Not connected to WebSocket.");
       return;
     }
-    const roomId    = document.getElementById("roomA").value;
-    const senderId  = document.getElementById("senderA").value;
-    const receiverId= document.getElementById("receiverA").value;
-    const content   = document.getElementById("msgA").value;
 
-    logA("Sent >> " + content);
+    const chatRoomId = parseInt(document.getElementById("chatRoomId").value);
+    const receiverId = parseInt(document.getElementById("receiverId").value);
+    const content = document.getElementById("message").value;
 
-    const payload = {
-      chatRoomId: parseInt(roomId),
-      senderId: parseInt(senderId),
-      receiverId: parseInt(receiverId),
+    const message = {
+      chatRoomId: chatRoomId,
+      receiverId: receiverId,
       content: content
     };
 
-    // 서버로 전송(@MessageMapping("/chat/private") 메서드에서 처리)
-    stompClientA.send("/app/chat/private", {}, JSON.stringify(payload));
-    document.getElementById("msgA").value = "";
-  }
-
-  function logA(msg) {
-    const logDiv = document.getElementById("logA");
-    logDiv.innerHTML += msg + "<br/>";
-  }
-
-  // ---------------------- USER B ----------------------
-  function connectB() {
-    const tokenB = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaW5zdW5nbGVlOTExQGdtYWlsLmNvbSIsImF1dGgiOiJVU0VSIiwidXNlcm5hbWUiOiJra3MiLCJ0b2tlbklkIjoiN2ZmOWFhYTAtZTg2Mi00NTVmLWJjMjMtMDliMmZmMjAzZmVhIiwiZXhwIjoxNzQ0MTM3NDY2fQ.ah-3N883VglYXCVOrvyMQshkxs7BRK_oxXxSb7I5wgws_DaKWoCLxH2BTqSnJ8BR9wWJwSzIYLsLuabZR8Ig9A"; // 실제 토큰 입력
-    const socketB = new SockJS('/ws-stomp?token=Bearer ' + tokenB);  // 토큰을 쿼리 파라미터로 전달
-    stompClientB = StompJs.Stomp.over(socketB);
-
-    stompClientB.connect({}, function(frame) {
-      logB("Connected B: " + frame);
-
-      // B가 "/topic/chatroom/{roomId}"를 구독
-      const roomId = document.getElementById("roomB").value;
-      stompClientB.subscribe("/topic/chatroom/" + roomId, function(message) {
-        const msgObj = JSON.parse(message.body);
-        logB("Received >> from: " + msgObj.senderUsername + " - " + msgObj.content);
-      });
-    });
-  }
-
-  function disconnectB() {
-    if (stompClientB !== null) {
-      stompClientB.disconnect();
-      stompClientB = null;
-    }
-    logB("Disconnected B");
-  }
-
-  function sendB() {
-    if (!stompClientB) {
-      alert("User B is not connected!");
-      return;
-    }
-    const roomId    = document.getElementById("roomB").value;
-    const senderId  = document.getElementById("senderB").value;
-    const receiverId= document.getElementById("receiverB").value;
-    const content   = document.getElementById("msgB").value;
-
-    logB("Sent >> " + content);
-
-    const payload = {
-      chatRoomId: parseInt(roomId),
-      senderId: parseInt(senderId),
-      receiverId: parseInt(receiverId),
-      content: content
-    };
-
-    // 서버로 전송
-    stompClientB.send("/app/chat/private", {}, JSON.stringify(payload));
-    document.getElementById("msgB").value = "";
-  }
-
-  function logB(msg) {
-    const logDiv = document.getElementById("logB");
-    logDiv.innerHTML += msg + "<br/>";
+    stompClient.send("/pub/chat/private", {}, JSON.stringify(message));
+    log("📤 Sent: " + JSON.stringify(message));
   }
 </script>
 </body>

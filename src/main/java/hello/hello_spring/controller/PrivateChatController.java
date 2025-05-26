@@ -10,9 +10,12 @@ import hello.hello_spring.repository.ChatRoomRepository;
 import hello.hello_spring.repository.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.util.Map;
 
 @Controller
 public class PrivateChatController {
@@ -39,20 +42,22 @@ public class PrivateChatController {
             tags = {"Private Chat", "Messaging"}
     )
     @MessageMapping("/chat/private")
-    public void handlePrivateMessage(PrivateChatMessageDto dto) {
+    public void handlePrivateMessage(PrivateChatMessageDto dto,
+                                     @Header("simpSessionAttributes") Map<String, Object> sessionAttributes) {
+
+        String senderEmail = (String) sessionAttributes.get("userEmail");
+        Member sender = memberRepository.findByEmail(senderEmail)
+                .orElseThrow(() -> new RuntimeException("Sender not found: " + senderEmail));
+
         Long chatRoomId = dto.getChatRoomId();
-        Long senderId   = dto.getSenderId();
         Long receiverId = dto.getReceiverId();
-        String content  = dto.getContent();
+        String content = dto.getContent();
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found: " + chatRoomId));
-        Member sender = memberRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("Sender not found: " + senderId));
         Member receiver = memberRepository.findById(receiverId)
                 .orElseThrow(() -> new RuntimeException("Receiver not found: " + receiverId));
 
-        // 메시지 DB 저장
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoom(chatRoom);
         chatMessage.setSender(sender);
@@ -60,7 +65,6 @@ public class PrivateChatController {
         chatMessage.setContent(content);
         chatMessageRepository.save(chatMessage);
 
-        // 응답 DTO
         ChatMessageResponseDto responseDto = new ChatMessageResponseDto();
         responseDto.setChatRoomId(chatRoom.getId());
         responseDto.setSenderUsername(sender.getUsername());
@@ -68,12 +72,6 @@ public class PrivateChatController {
         responseDto.setContent(chatMessage.getContent());
         responseDto.setCreatedAt(chatMessage.getCreatedAt());
 
-        // ================ 가장 중요한 부분 ================
-        // Topic으로 전송 -> "/topic/chatroom/{chatRoomId}"
-        messagingTemplate.convertAndSend(
-                "/topic/chatroom/" + chatRoomId,
-                responseDto
-        );
-        // ===================================================
+        messagingTemplate.convertAndSend("/topic/chatroom/" + chatRoomId, responseDto);
     }
 }

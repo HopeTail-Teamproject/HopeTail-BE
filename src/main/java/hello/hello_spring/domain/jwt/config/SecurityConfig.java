@@ -36,6 +36,8 @@ public class SecurityConfig implements WebMvcConfigurer {
             "/error",
             "/api/account/auth",
             "/ws-stomp/**",         // ✅ WebSocket 연결 허용 추가
+            "/ws/chat/**", // For Chat - minsung
+            "/ws/**", // For Chat - minsung
             "/chat-test.html",      // ✅ 테스트용 HTML 페이지도 허용
             "/js/**",                // ✅ JS 파일도 허용 (stomp.js, sockjs.js 등)
             "/health"               //상태검사용
