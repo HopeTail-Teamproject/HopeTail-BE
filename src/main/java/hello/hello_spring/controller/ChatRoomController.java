@@ -1,6 +1,7 @@
 package hello.hello_spring.controller;
 
 import hello.hello_spring.domain.ChatRoom;
+import hello.hello_spring.dto.chat.ChatMessageResponseDto;
 import hello.hello_spring.dto.chat.ChatRoomRequestDto;
 import hello.hello_spring.dto.chat.ChatRoomResponseDto;
 import hello.hello_spring.service.ChatService;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/chatrooms")
@@ -34,5 +37,11 @@ public class ChatRoomController {
         ChatRoom room = chatService.getChatRoom(roomId);
 
         return ResponseEntity.ok(new ChatRoomResponseDto(room));
+    }
+
+    @Operation(summary = "채팅방 메시지 목록")
+    @GetMapping("/{roomId}/messages")
+    public ResponseEntity<List<ChatMessageResponseDto>> getMessages(@PathVariable Long roomId) {
+        return ResponseEntity.ok(chatService.getMessages(roomId));
     }
 }

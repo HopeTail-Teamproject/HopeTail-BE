@@ -2,6 +2,8 @@ package hello.hello_spring.service;
 
 import hello.hello_spring.domain.jwt.token.TokenProvider;
 import hello.hello_spring.domain.member.Member;
+import hello.hello_spring.dto.chat.ChatMessageMapper;
+import hello.hello_spring.dto.chat.ChatMessageResponseDto;
 import hello.hello_spring.repository.ChatMessageRepository;
 import hello.hello_spring.repository.ChatRoomRepository;
 import hello.hello_spring.repository.MemberRepository;
@@ -59,20 +61,20 @@ public class ChatService {
     /**
      * 채팅 메시지 저장
      */
-    public ChatMessage saveMessage(Long chatRoomId, String senderEmail, String content) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
-
-        Member sender = memberRepository.findByEmail(senderEmail)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
-
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setChatRoom(chatRoom);
-        chatMessage.setSender(sender);
-        chatMessage.setContent(content);
-
-        return chatMessageRepository.save(chatMessage);
-    }
+//    public ChatMessage saveMessage(Long chatRoomId, String senderEmail, String content) {
+//        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+//                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+//
+//        Member sender = memberRepository.findByEmail(senderEmail)
+//                .orElseThrow(() -> new RuntimeException("Sender not found"));
+//
+//        ChatMessage chatMessage = new ChatMessage();
+//        chatMessage.setChatRoom(chatRoom);
+//        chatMessage.setSender(sender);
+//        chatMessage.setContent(content);
+//
+//        return chatMessageRepository.save(chatMessage);
+//    }
 
     public ChatRoom getChatRoom(Long roomId) {
         return chatRoomRepository.findById(roomId)
@@ -81,8 +83,36 @@ public class ChatService {
     /**
      * 채팅 메시지 조회
      */
-    public List<ChatMessage> getMessages(Long chatRoomId) {
-        return chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
+    @Transactional
+    public ChatMessage saveMessage(Long chatRoomId, String senderEmail, String content) {
+
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+
+        Member sender = memberRepository.findByEmail(senderEmail)
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
+
+        /* ★ 1:1 방이므로 receiver는 서버가 결정 */
+        Member receiver = sender.equals(chatRoom.getMember1())
+                ? chatRoom.getMember2()
+                : chatRoom.getMember1();
+
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setChatRoom(chatRoom);
+        chatMessage.setSender(sender);
+        chatMessage.setReceiver(receiver);   // ★ 추가
+        chatMessage.setContent(content);
+
+        return chatMessageRepository.save(chatMessage);
+    }
+
+    /* 메시지 조회 → DTO 리스트 변환 */
+    @Transactional
+    public List<ChatMessageResponseDto> getMessages(Long chatRoomId) {
+        return chatMessageRepository.findAllByChatRoomIdOrderByCreatedAtAsc(chatRoomId)
+                .stream()
+                .map(ChatMessageMapper::toDto)       // ★ 매퍼(아래 3번) 사용
+                .toList();
     }
 
 }
