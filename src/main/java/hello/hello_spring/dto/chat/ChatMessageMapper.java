@@ -13,9 +13,11 @@ public final class ChatMessageMapper {
 
         dto.setSenderId(m.getSender().getId());
         dto.setSenderUsername(m.getSender().getUsername());
+        dto.setSenderEmail(m.getSender().getEmail());
 
         dto.setReceiverId(m.getReceiver().getId());
         dto.setReceiverUsername(m.getReceiver().getUsername());
+        dto.setReceiverEmail(m.getReceiver().getEmail());
 
         dto.setContent(m.getContent());
         dto.setCreatedAt(m.getCreatedAt());

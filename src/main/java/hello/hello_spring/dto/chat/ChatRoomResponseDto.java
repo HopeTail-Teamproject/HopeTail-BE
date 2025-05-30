@@ -13,20 +13,32 @@ public class ChatRoomResponseDto {
     @Schema(description = "채팅방 ID", example = "1")
     private Long chatRoomId;
 
-    @Schema(description = "첫 번째 채팅 참여자의 사용자명", example = "이민성")
-    private String member1Username;
+    @Schema(description = "member1 ID", example = "73")
+    private final Long member1Id;                 // ★ 추가
+    @Schema(description = "member1 username", example = "이민성")
+    private final String member1Username;
+    @Schema(description = "member1 이메일", example = "chocomin0211@hanyang.ac.kr")
+    private final String member1Email;
 
-    @Schema(description = "두 번째 채팅 참여자의 사용자명", example = "이규현")
-    private String member2Username;
+    /* ───────── 회원 2 ───────── */
+    @Schema(description = "member2 ID", example = "85")
+    private final Long member2Id;                 // ★ 추가
+    @Schema(description = "member2 username", example = "이규현")
+    private final String member2Username;
+    @Schema(description = "member2 이메일", example = "kks1234@gmail.com")
+    private final String member2Email;
 
-    @Schema(description = "채팅방 생성 시각 (ISO 형식)", example = "2025-05-08T14:30:00")
-    private LocalDateTime createdAt;
+    @Schema(description = "방 생성 시각", example = "2025-05-23T15:48:49.712654")
+    private final LocalDateTime createdAt;
 
-    // 생성자에서 엔티티 → DTO 변환
-    public ChatRoomResponseDto(ChatRoom chatRoom) {
-        this.chatRoomId = chatRoom.getId();
-        this.member1Username = chatRoom.getMember1().getUsername(); // Member 엔티티에 getUsername()이 있다고 가정
-        this.member2Username = chatRoom.getMember2().getUsername();
-        this.createdAt = chatRoom.getCreatedAt();
+    public ChatRoomResponseDto(ChatRoom r) {
+        this.chatRoomId       = r.getId();
+        this.member1Id        = r.getMember1().getId();          // ★
+        this.member1Username  = r.getMember1().getUsername();
+        this.member1Email = r.getMember1().getEmail();
+        this.member2Id        = r.getMember2().getId();          // ★
+        this.member2Username  = r.getMember2().getUsername();
+        this.member2Email = r.getMember1().getEmail();
+        this.createdAt        = r.getCreatedAt();
     }
 }
