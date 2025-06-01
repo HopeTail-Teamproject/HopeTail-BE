@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>게시글 생성 테스트</title>
+</head>
+<body>
+<h2>게시글 생성 테스트</h2>
+
+<form id="postForm">
+    <label>제목: <input type="text" id="title" required /></label><br /><br />
+    <label>내용: <textarea id="content" required></textarea></label><br /><br />
+    <label>카테고리 (REVIEW 또는 DIARY):
+        <input type="text" id="category" required />
+    </label><br /><br />
+    <label>회원 ID (예: 1): <input type="number" id="memberId" required /></label><br /><br />
+    <button type="submit">게시글 전송</button>
+</form>
+
+<h3>응답 결과</h3>
+<pre id="responseArea"></pre>
+
+<script>
+    document.getElementById('postForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const data = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').value,
+            category: document.getElementById('category').value.toUpperCase(),
+            memberId: parseInt(document.getElementById('memberId').value)
+        };
+
+        const response = await fetch('/api/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        document.getElementById('responseArea').textContent = JSON.stringify(result, null, 2);
+    });
+</script>
+</body>
+</html>
