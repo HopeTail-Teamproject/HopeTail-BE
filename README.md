@@ -49,14 +49,14 @@
 
 
 ## 3. System Architecture
-png (민성이 시키기)
+
 
 
 ## 4. UI/UX 화면 설계서
-front
+
 
 ## 5. Backend 요구 사항 정의서
-프로젝트 진행하면서 계속 추가
+
 
 ## 6. Database
 ERD
